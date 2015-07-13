@@ -14,10 +14,8 @@
 		2200D81A1B4EB27A00006944 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2200D8191B4EB27A00006944 /* CoreGraphics.framework */; };
 		2200D81C1B4EB28900006944 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2200D81B1B4EB28900006944 /* UIKit.framework */; };
 		2200D81E1B4EB29000006944 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2200D81D1B4EB29000006944 /* Foundation.framework */; };
-		223FBBFC1B4ECD0700DEB219 /* RevMobAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223FBBFB1B4ECD0700DEB219 /* RevMobAds.framework */; };
 		223FBBFE1B4ECD2B00DEB219 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223FBBFD1B4ECD2B00DEB219 /* SystemConfiguration.framework */; };
 		223FBC001B4ECD3400DEB219 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223FBBFF1B4ECD3400DEB219 /* MediaPlayer.framework */; };
-		223FBC021B4ECD3C00DEB219 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223FBC011B4ECD3C00DEB219 /* AdSupport.framework */; };
 		223FBC051B50346D00DEB219 /* UIView+RemoveConstraints.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FBC041B50346D00DEB219 /* UIView+RemoveConstraints.m */; };
 		223FBC081B50652A00DEB219 /* GameOverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FBC071B50652A00DEB219 /* GameOverViewController.m */; };
 		223FBC481B52F13000DEB219 /* ShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FBC471B52F13000DEB219 /* ShareViewController.m */; };
@@ -65,10 +63,8 @@
 		2200D8191B4EB27A00006944 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2200D81B1B4EB28900006944 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2200D81D1B4EB29000006944 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		223FBBFB1B4ECD0700DEB219 /* RevMobAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RevMobAds.framework; sourceTree = "<group>"; };
 		223FBBFD1B4ECD2B00DEB219 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		223FBBFF1B4ECD3400DEB219 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
-		223FBC011B4ECD3C00DEB219 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		223FBC031B50346D00DEB219 /* UIView+RemoveConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+RemoveConstraints.h"; sourceTree = "<group>"; };
 		223FBC041B50346D00DEB219 /* UIView+RemoveConstraints.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+RemoveConstraints.m"; sourceTree = "<group>"; };
 		223FBC061B50652A00DEB219 /* GameOverViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverViewController.h; sourceTree = "<group>"; };
@@ -126,7 +122,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				223FBC021B4ECD3C00DEB219 /* AdSupport.framework in Frameworks */,
 				223FBC001B4ECD3400DEB219 /* MediaPlayer.framework in Frameworks */,
 				223FBBFE1B4ECD2B00DEB219 /* SystemConfiguration.framework in Frameworks */,
 				2200D81E1B4EB29000006944 /* Foundation.framework in Frameworks */,
@@ -134,7 +129,6 @@
 				2200D81A1B4EB27A00006944 /* CoreGraphics.framework in Frameworks */,
 				2200D8181B4EB25B00006944 /* Chartboost.framework in Frameworks */,
 				2200D8141B4D952600006944 /* iAd.framework in Frameworks */,
-				223FBBFC1B4ECD0700DEB219 /* RevMobAds.framework in Frameworks */,
 				2244528A1B49C425007CB101 /* StoreKit.framework in Frameworks */,
 				22A2179C1B4302920015DF46 /* GameKit.framework in Frameworks */,
 				9236C30E56E81995E8620A29 /* libPods.a in Frameworks */,
@@ -251,10 +245,8 @@
 		A4A183C63852DF741DCA4148 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				223FBC011B4ECD3C00DEB219 /* AdSupport.framework */,
 				223FBBFF1B4ECD3400DEB219 /* MediaPlayer.framework */,
 				223FBBFD1B4ECD2B00DEB219 /* SystemConfiguration.framework */,
-				223FBBFB1B4ECD0700DEB219 /* RevMobAds.framework */,
 				2200D81D1B4EB29000006944 /* Foundation.framework */,
 				2200D81B1B4EB28900006944 /* UIKit.framework */,
 				2200D8191B4EB27A00006944 /* CoreGraphics.framework */,

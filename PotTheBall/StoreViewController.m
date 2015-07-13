@@ -68,7 +68,7 @@
 }
 
 - (IBAction)showFacebook:(id)sender {
-        [[AdHelper sharedManager] showRevmobRewardVideo];
+       
 }
 - (IBAction)showTwitter:(id)sender {
 }

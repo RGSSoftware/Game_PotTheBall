@@ -60,13 +60,7 @@
         if ([AdHelper shouldShowChartboostInterstitialOnStartUp]) {
             [[AdHelper sharedManager] showChartboostInterstitial];
         }
-        if ([AdHelper shouldShowIAdsInterstitialOnStartUp]) {
-            
-            [NSTimer bk_scheduledTimerWithTimeInterval:0.2 block:^(NSTimer *timer) {
-                 [[AdHelper sharedManager] showIAdsInterstitial];
-            } repeats:NO];
-            
-        }
+        
     }
     
     return YES;
@@ -116,16 +110,7 @@
             if ([AdHelper shouldShowChartboostInterstitialOnEnterForeground]) {
                 [[AdHelper sharedManager] showChartboostInterstitial];
             }
-            if ([AdHelper shouldShowRemobInterstitialOnEnterForeground]) {
-                [[AdHelper sharedManager] showRemobInterstitial];
-            }
-            if ([AdHelper shouldShowIAdsInterstitialOnEnterForeground]) {
-                
-                [NSTimer bk_scheduledTimerWithTimeInterval:0.2 block:^(NSTimer *timer) {
-                    [[AdHelper sharedManager] showIAdsInterstitial];
-                } repeats:NO];
-                
-            }
+            
         } repeats:NO];
         
     }

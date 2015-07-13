@@ -16,11 +16,11 @@
 #import <AdSupport/AdSupport.h>
 #import <Chartboost/Chartboost.h>
 #import <Chartboost/CBNewsfeed.h>
-#import <RevMobAds/RevMobAds.h>
+
 static NSString *const interstitialAdUnitID = @"ca-app-pub-3940256099942544/4411468910";
 
 
-@interface AdHelper : NSObject <GADInterstitialDelegate, ADInterstitialAdDelegate, ChartboostDelegate, RevMobAdsDelegate>
+@interface AdHelper : NSObject <GADInterstitialDelegate, ADInterstitialAdDelegate, ChartboostDelegate>
 
 + (instancetype)sharedManager;
 
@@ -31,24 +31,19 @@ static NSString *const interstitialAdUnitID = @"ca-app-pub-3940256099942544/4411
 -(void)loadAdNetworks;
 
 +(BOOL)shouldShowInterstitialOnStartUp;
-+(BOOL)shouldShowRemobInterstitialOnStartUp;
 +(BOOL)shouldShowChartboostInterstitialOnStartUp;
 +(BOOL)shouldShowAdmobInterstitialOnStartUp;
-+(BOOL)shouldShowIAdsInterstitialOnStartUp;
+
 
 +(BOOL)shouldShowInterstitialOnEnterForeground;
 +(BOOL)shouldShowAdmobInterstitialOnEnterForeground;
 +(BOOL)shouldShowChartboostInterstitialOnEnterForeground;
-+(BOOL)shouldShowRemobInterstitialOnEnterForeground;
-+(BOOL)shouldShowIAdsInterstitialOnEnterForeground;
+
 
 
 -(void)showAdmobInterstitial;
 -(void)showChartboostInterstitial;
 -(void)showIAdsInterstitial;
--(void)showRemobInterstitial;
-
--(void)showRevmobRewardVideo;
 
 
 -(void)showRewardVideoWithSuccessBlock:(void (^)(BOOL success))successBlock;

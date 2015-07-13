@@ -22,10 +22,6 @@
 @property(nonatomic, strong) UIView *adPlaceholderView;
 @property BOOL requestingAd;
 
-
-@property (nonatomic, strong)RevMobFullscreen *revMobFullscreen;
-@property (nonatomic, strong)RevMobFullscreen *revMobRewardFullscreen;
-
 @property BOOL testMode;
 
 
@@ -129,26 +125,6 @@
         
     }
     
-    if (![[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Remob_Config"] objectForKey:@"appId"] isEqualToString:@""]) {
-        [RevMobAds startSessionWithAppID:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Remob_Config"] objectForKey:@"appId"] withSuccessHandler:^{
-//            self.revMobFullscreen = [[RevMobAds session] fullscreen];
-//            [self.revMobFullscreen loadAd];
-            
-            self.revMobRewardFullscreen = [[RevMobAds session] fullscreen];
-            self.revMobRewardFullscreen.delegate = self;
-            [self.revMobRewardFullscreen loadRewardedVideo];
-            
-            
-            if ([AdHelper shouldShowRemobInterstitialOnStartUp]) {
-                [NSTimer bk_scheduledTimerWithTimeInterval:0.8 block:^(NSTimer *timer) {
-                    [self showRemobInterstitial];
-                } repeats:NO];
-            }
-            
-        } andFailHandler:^(NSError *error) {
-            NSLog(@"simple print-----no start of revmob------{%@}", error);
-        }];
-    }
     
     
 
@@ -166,13 +142,6 @@
     return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnStartUp"] boolValue] ;
 }
 
-+(BOOL)shouldShowRemobInterstitialOnStartUp{
-    return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Remob_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnStartUp"] boolValue] ;
-}
-
-+(BOOL)shouldShowIAdsInterstitialOnStartUp{
-    return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"IAds_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnStartUp"] boolValue] ;
-}
 
 +(BOOL)shouldShowInterstitialOnEnterForeground{
     return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue];
@@ -184,14 +153,6 @@
 
 +(BOOL)shouldShowChartboostInterstitialOnEnterForeground{
     return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue] ;
-}
-
-+(BOOL)shouldShowRemobInterstitialOnEnterForeground{
-    return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Remob_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue] ;
-}
-
-+(BOOL)shouldShowIAdsInterstitialOnEnterForeground{
-    return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"IAds_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue] ;
 }
 
 
@@ -210,25 +171,6 @@
     [Chartboost showInterstitial:CBLocationStartup];
 }
 
--(void)showRemobInterstitial{
-    [self.revMobFullscreen showAd];
-}
-
--(void)showRevmobRewardVideo{
-    if(self.revMobRewardFullscreen) [self.revMobRewardFullscreen showRewardedVideo];
-}
-
-
-
--(void)showIAdsInterstitial{
-    [self topViewControllerWithRootViewController:[self topViewController]].interstitialPresentationPolicy = ADInterstitialPresentationPolicyManual;
-    
-    BOOL ccan = [[self topViewControllerWithRootViewController:[self topViewController]] requestInterstitialAdPresentation];
-    
-    NSLog(@"simple print-----can------{%@}", ccan);
-
-}
-
 -(void)showRewardVideoWithSuccessBlock:(void (^)(BOOL))successBlock{
     if (self.testMode) {
         if (successBlock) {
@@ -242,9 +184,7 @@
             [Chartboost showRewardedVideo:CBLocationIAPStore];
             //        }
         }
-        if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Remob_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
-            [self showRevmobRewardVideo];
-        }
+        
     }
     
 }
