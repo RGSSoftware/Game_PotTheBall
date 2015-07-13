@@ -1,0 +1,33 @@
+PODS:
+  - BlocksKit (2.2.5):
+    - BlocksKit/All (= 2.2.5)
+  - BlocksKit/All (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+    - BlocksKit/MessageUI
+    - BlocksKit/UIKit
+  - BlocksKit/Core (2.2.5)
+  - BlocksKit/DynamicDelegate (2.2.5)
+  - BlocksKit/MessageUI (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+  - BlocksKit/UIKit (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+  - Google-Mobile-Ads-SDK (7.3.1)
+  - MBProgressHUD (0.9.1)
+  - MTAnimation (1.2.2)
+
+DEPENDENCIES:
+  - BlocksKit
+  - Google-Mobile-Ads-SDK
+  - MBProgressHUD
+  - MTAnimation
+
+SPEC CHECKSUMS:
+  BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
+  Google-Mobile-Ads-SDK: 3647bfddc7384c514ab96a8bed86d98b31e623e4
+  MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  MTAnimation: 1079f4ff38c0282779ced010d7363a8f893fd3ee
+
+COCOAPODS: 0.37.1
