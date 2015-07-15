@@ -56,6 +56,8 @@ const int startingCountDown = 5;
 @property int currentlevelNumber;
 @property int currentTurnCount;
 
+@property int currentWave;
+
 @property (nonatomic, strong)NSDictionary *levels;
 
 
@@ -74,48 +76,32 @@ const int startingCountDown = 5;
     self.powerBallImageName = @"multi-color";
     
     self.colorSeg = [@[@(3), @(1), @(4), @(2)] mutableCopy];
-    
-//    self.currentCountDown =;
-    
+        
     self.removeBalls = [NSMutableArray new];
     self.isBonusActivate = NO;
     self.isViewWillAppear = NO;
     
     
     
-    self.levels = @{ @(1) : @{@"turnCount":@(5),
-                              @"rotationProbability": [NSNull new]
-                              },
-                     @(2) : @{@"turnCount":@(8),
-                              @"rotationProbability":@(3)
-                              },
-                     @(3) : @{@"turnCount":@(10),
-                             @"rotationProbability":@(2)
-                             },
-                     @(4) : @{@"turnCount":@(20),
-                              @"rotationProbability":@(1)
-                              },
-                     @(5) : @{@"turnCount":@(INT_MAX),
-                              @"rotationProbability":@(0)
-                              },
-                     };
 }
 
-
-
 -(void)viewWillAppear:(BOOL)animated{
-    self.currentlevelNumber = 1;
-    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
-    self.currentTurnCount = 1;
-    
-    
     [super viewWillAppear:animated];
     self.isViewWillAppear = YES;
     
     NSDictionary *imageData = [self randBallImage];
     self.ball.image = [imageData objectForKey:@"image"];
     self.ball.tag = [[imageData objectForKey:@"tag"] integerValue];
+    
+    
     if (self.gameState == GameStatePrepareStart) {
+        
+        if (self.gameMode == GameModeTimeAttack) {
+            [self initTimeMode];
+            
+        } else if (self.gameMode == GameModeArcade){
+            [self initArcadeMode];
+        }
         
         self.ball.hidden = YES;
         self.playButton.hidden = NO;
@@ -123,17 +109,7 @@ const int startingCountDown = 5;
     
     [NSTimer bk_scheduledTimerWithTimeInterval:0.3 block:^(NSTimer *timer) {
         
-        double rads = DEGREES_TO_RADIANS(-45);
-        CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
-        CGAffineTransform scaleTrans  = CGAffineTransformScale(transform,
-                                                               .70, .70);
-        [UIView animateWithDuration:.5 animations:^{
-            self.ring.transform = scaleTrans;
-            
-        }];
-        
-        //    [self rotateColorSegRightTurns:1];
-        [self rotateColorSegLeftTurns:1];
+        [self initRingState];
     
 
             } repeats:NO];
@@ -143,11 +119,7 @@ const int startingCountDown = 5;
         [view removeFromSuperview];
     }
     
-    self.currentCountDown = startingCountDown;
-    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
-    
-    [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
-    
+        [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
     
 }
 
@@ -159,18 +131,14 @@ const int startingCountDown = 5;
         self.bonusBalls.layer.cornerRadius = self.bonusBalls.frame.size.height/2;
 
         CGRect rect = self.ball.frame;
+        int tag = (int)self.ball.tag;
         
         self.ball = [[UIImageView alloc] initWithImage:self.ball.image];
-        self.ball.tag = self.ball.tag;
+        self.ball.tag = tag;
         self.ball.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2 - CGRectGetWidth(rect)/2, CGRectGetHeight(self.view.frame)/2 - CGRectGetHeight(rect)/2, CGRectGetWidth(rect), CGRectGetHeight(rect));
         
         self.isViewWillAppear = NO;
     }
-    
-    
-    
-
-
 }
 
 #pragma mark - Ball Creation
@@ -231,13 +199,26 @@ const int startingCountDown = 5;
             currentl.y < previousl.y) {
             
             UIView *ball = self.balls[0];
+            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
             
             if (ball.tag != 0 && ball.tag != [self.colorSeg[0] integerValue] ) {
-                self.score--;
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score--;
+                } else if (self.gameMode == GameModeArcade) {
+                    //game over
+                    [self.countDownTimer invalidate];
+                    
+                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+                }
             } else {
-                self.score++;
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score++;
+                } else if (self.gameMode == GameModeArcade) {
+                    self.score--;
+                }
+                
             }
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
             
@@ -272,13 +253,29 @@ const int startingCountDown = 5;
                    currentl.x < previousl.x) {
             
             UIView *ball = self.balls[0];
+            
+            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
-            if (ball.tag != [self.colorSeg[3] integerValue] && ball.tag != 0) {
-                self.score--;
+            
+            if (ball.tag != [self.colorSeg[3] integerValue] && ball.tag != 0 ) {
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score--;
+                } else if (self.gameMode == GameModeArcade) {
+                    //game over
+                    [self.countDownTimer invalidate];
+                    
+                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+                }
             } else {
-                self.score++;
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score++;
+                } else if (self.gameMode == GameModeArcade) {
+                    self.score--;
+                }
+                
             }
+
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
             
             
@@ -312,12 +309,25 @@ const int startingCountDown = 5;
                    currentl.x > previousl.x) {
             
             UIView *ball = self.balls[0];
+            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
-            if (ball.tag != [self.colorSeg[1] integerValue] && ball.tag != 0) {
-                self.score--;
+            if (ball.tag != [self.colorSeg[1] integerValue] && ball.tag != 0 ) {
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score--;
+                } else if (self.gameMode == GameModeArcade) {
+                    //game over
+                    [self.countDownTimer invalidate];
+                    
+                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+                }
             } else {
-                self.score++;
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score++;
+                } else if (self.gameMode == GameModeArcade) {
+                    self.score--;
+                }
+                
             }
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
             
@@ -352,12 +362,25 @@ const int startingCountDown = 5;
                    currentl.y > previousl.y) {
             
             UIView *ball = self.balls[0];
+            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
-            if (ball.tag != [self.colorSeg[2] integerValue] && ball.tag != 0) {
-                self.score--;
+            if (ball.tag != [self.colorSeg[2] integerValue] && ball.tag != 0 ) {
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score--;
+                } else if (self.gameMode == GameModeArcade) {
+                    //game over
+                    [self.countDownTimer invalidate];
+                    
+                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+                }
             } else {
-                self.score++;
+                if (self.gameMode == GameModeTimeAttack) {
+                    self.score++;
+                } else if (self.gameMode == GameModeArcade) {
+                    self.score--;
+                }
+                
             }
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
             
@@ -392,39 +415,44 @@ const int startingCountDown = 5;
     }
     
 }
+
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
     
     if (!self.isBonusActivate) {
         
         if (self.isAnimation) {
             
-            if (self.currentTurnCount != [[self.currentlevel objectForKey:@"turnCount"] integerValue]) {
-                self.currentTurnCount++;
-                
-                if (![[self.currentlevel objectForKey:@"rotationProbability"] isKindOfClass:[NSNull class]]) {
-                    int rand = arc4random_uniform((int)[[self.currentlevel objectForKey:@"rotationProbability"] integerValue]);
-                    if (rand == 0) {
-                        int randRotation = arc4random_uniform(3) + 1;
-                        
-                        if (arc4random_uniform(2) == 0) {
-                            [self rotateRingLeftTurns:randRotation];
-                            [self rotateColorSegLeftTurns:randRotation];
-                        } else {
-                            [self rotateRingRightTurns:randRotation];
-                            [self rotateColorSegRightTurns:randRotation];
-                        }
-                    }
+            if (self.gameMode == GameModeTimeAttack) {
+                if (self.currentTurnCount != [[self.currentlevel objectForKey:@"turnCount"] integerValue]) {
+                    self.currentTurnCount++;
                     
+                    [self rotateRing];
+                } else {
+                    [self incrementTimeLevel];
                 }
-            } else {
-                if (self.currentTurnCount == [[self.currentlevel objectForKey:@"turnCount"] integerValue]) {
-                    self.currentTurnCount = 1;
-                    self.currentlevelNumber++;
-                    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+            } else if (self.gameMode == GameModeArcade){
+                if (self.score != 0) {
+                    self.currentTurnCount++;
+
+                    [self rotateRing];
+                } else {
+                    [self incrementWaveLevel];
+
                 }
             }
             
         }
+    } else {
+        if (self.gameMode == GameModeArcade){
+            if (self.score != 0) {
+                self.currentTurnCount++;
+            
+            } else {
+                [self incrementWaveLevel];
+                
+            }
+        }
+
     }
     
      self.isAnimation = NO;
@@ -504,13 +532,12 @@ const int startingCountDown = 5;
     if ([segue.destinationViewController isKindOfClass:[GameOverViewController class]]) {
         GameOverViewController *gameOverViewController = (GameOverViewController *)segue.destinationViewController;
         
-        gameOverViewController.score = self.score;
+        if (self.gameMode == GameModeTimeAttack) {
+            gameOverViewController.score = self.score;
+        } else if (self.gameMode == GameModeArcade) {
+            gameOverViewController.score = self.currentTurnCount - 1;
+        }
     }
-    //reset game
-    self.currentCountDown = startingCountDown;
-    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
-    self.score = 0;
-    self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
 }
 -(IBAction)unwindToGameBoard:(UIStoryboardSegue *)segue {
 }
@@ -562,7 +589,7 @@ const int startingCountDown = 5;
         
         
         
-//        self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateCountDownLabel:) userInfo:nil repeats:YES];
+        self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateCountDownLabel:) userInfo:nil repeats:YES];
         
     }
 }
@@ -570,30 +597,19 @@ const int startingCountDown = 5;
 - (IBAction)restartGame:(id)sender {
     if (self.gameState != GameStatePrepareStart) {
         self.gameState = GameStatePrepareStart;
-        self.currentlevelNumber = 1;
-        self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
-        self.currentTurnCount = 1;
+        if (self.gameMode == GameModeTimeAttack) {
         
-        self.currentCountDown = startingCountDown;
-        self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
-        self.score = 0;
-        self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
+            [self initTimeMode];
+            
+        } else if (self.gameMode == GameModeArcade) {
+            
+            [self initArcadeMode];
+        }
         
         self.ball.hidden = YES;
         self.playButton.hidden = NO;
         
-        
-        
-        double rads = DEGREES_TO_RADIANS(-45);
-        CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
-        CGAffineTransform scaleTrans  = CGAffineTransformScale(transform,
-                                                               .70, .70);
-        [UIView animateWithDuration:.4 animations:^{
-            self.ring.transform = scaleTrans;
-            
-        }];
-        
-        [self rotateColorSegLeftTurns:1];
+        [self initRingState];
         
         for (UIView *view in self.balls) {
             [view removeFromSuperview];
@@ -604,6 +620,7 @@ const int startingCountDown = 5;
         self.ball = [[UIImageView alloc] initWithImage:self.ball.image];
         self.ball.tag = self.ball.tag;
         self.ball.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2 - CGRectGetWidth(rect)/2, CGRectGetHeight(self.view.frame)/2 - CGRectGetHeight(rect)/2, CGRectGetWidth(rect), CGRectGetHeight(rect));
+       
     }
     
 }
@@ -654,4 +671,135 @@ const int startingCountDown = 5;
     }
     
 }
+
+
+
+- (void)rotateRing {
+    if (![[self.currentlevel objectForKey:@"rotationProbability"] isKindOfClass:[NSNull class]]) {
+        int rand = arc4random_uniform((int)[[self.currentlevel objectForKey:@"rotationProbability"] integerValue]);
+        if (rand == 0) {
+            int randRotation = arc4random_uniform(3) + 1;
+            
+            if (arc4random_uniform(2) == 0) {
+                [self rotateRingLeftTurns:randRotation];
+                [self rotateColorSegLeftTurns:randRotation];
+            } else {
+                [self rotateRingRightTurns:randRotation];
+                [self rotateColorSegRightTurns:randRotation];
+            }
+        }
+        
+    }
+}
+- (void)incrementWaveLevel {
+    self.currentlevelNumber++;
+    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+    
+    self.currentCountDown = [[self.currentlevel objectForKey:@"countDown"] intValue];
+    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+    
+    self.score = [[self.currentlevel objectForKey:@"turnCount"] intValue];
+    self.scoreLabel.text = NSStringFromInt([[self.currentlevel objectForKey:@"turnCount"] intValue]);
+    
+    self.currentWave++;
+    self.waveLabel.text = NSStringFromInt(self.currentWave);
+}
+
+- (void)incrementTimeLevel {
+    if (self.currentTurnCount == [[self.currentlevel objectForKey:@"turnCount"] integerValue]) {
+        self.currentTurnCount = 1;
+        self.currentlevelNumber++;
+        self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+    }
+}
+
+- (void)initArcadeMode {
+    self.waveLabel.hidden = NO;
+    self.waveStaticLabel.hidden = NO;
+    
+    self.scoreStaticLabel.text = @"Balls";
+    
+    
+    self.levels = @{ @(1) : @{@"turnCount":@(5),
+                              @"rotationProbability": [NSNull new],
+                              @"countDown" : @(45)
+                              },
+                     @(2) : @{@"turnCount":@(8),
+                              @"rotationProbability":@(3),
+                              @"countDown" : @(5)
+                              },
+                     @(3) : @{@"turnCount":@(10),
+                              @"rotationProbability":@(2),
+                              @"countDown" : @(25)
+                              },
+                     @(4) : @{@"turnCount":@(20),
+                              @"rotationProbability":@(1),
+                              @"countDown" : @(45)
+                              },
+                     @(5) : @{@"turnCount":@(INT_MAX),
+                              @"rotationProbability":@(0),
+                              @"countDown" : @(45)
+                              },
+                     };
+    
+    self.currentlevelNumber = 1;
+    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+    self.currentTurnCount = 1;
+    
+    self.currentCountDown = [[self.currentlevel objectForKey:@"countDown"] intValue];
+    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+    
+    self.score = [[self.currentlevel objectForKey:@"turnCount"] intValue];
+    self.scoreLabel.text = NSStringFromInt([[self.currentlevel objectForKey:@"turnCount"] intValue]);
+    
+    
+    self.currentWave = 1;
+    self.waveLabel.text = NSStringFromInt(self.currentWave);
+}
+
+- (void)initTimeMode {
+    self.waveLabel.hidden = YES;
+    self.waveStaticLabel.hidden = YES;
+    
+    self.scoreStaticLabel.text = @"Points";
+    
+    self.levels = @{ @(1) : @{@"turnCount":@(5),
+                              @"rotationProbability": [NSNull new]
+                              },
+                     @(2) : @{@"turnCount":@(8),
+                              @"rotationProbability":@(3)
+                              },
+                     @(3) : @{@"turnCount":@(10),
+                              @"rotationProbability":@(2)
+                              },
+                     @(4) : @{@"turnCount":@(20),
+                              @"rotationProbability":@(1)
+                              },
+                     @(5) : @{@"turnCount":@(INT_MAX),
+                              @"rotationProbability":@(0)
+                              },
+                     };
+    self.currentlevelNumber = 1;
+    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+    self.currentTurnCount = 1;
+    
+    self.currentCountDown = startingCountDown;
+    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+    self.score = 0;
+    self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
+}
+
+- (void)initRingState {
+    double rads = DEGREES_TO_RADIANS(-45);
+    CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
+    CGAffineTransform scaleTrans  = CGAffineTransformScale(transform,
+                                                           .70, .70);
+    [UIView animateWithDuration:.4 animations:^{
+        self.ring.transform = scaleTrans;
+        
+    }];
+    
+    [self rotateColorSegLeftTurns:1];
+}
+
 @end

@@ -29,11 +29,12 @@ typedef NS_ENUM(NSUInteger, GameMode) {
 
 
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (weak, nonatomic) IBOutlet UILabel *scoreStaticLabel;
+@property (weak, nonatomic) IBOutlet UILabel *waveLabel;
+@property (weak, nonatomic) IBOutlet UILabel *waveStaticLabel;
 @property (weak, nonatomic) IBOutlet UILabel *countDownLabel;
-- (IBAction)rotate:(id)sender;
+@property (weak, nonatomic) IBOutlet UILabel *countDownStaticLabel;
 
-
-@property (strong, nonatomic) IBOutletCollection(UIView) NSArray *hudComponentViews;
 
 - (IBAction)startGame:(id)sender;
 - (IBAction)restartGame:(id)sender;
