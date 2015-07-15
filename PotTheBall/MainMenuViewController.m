@@ -21,6 +21,7 @@
 #import "NSString+RGSInt.h"
 
 #import "MainGameBoardViewController.h"
+#import "AdHelper.h"
 
 
 @interface MainMenuViewController ()
@@ -62,14 +63,7 @@
     
 }
 -(void)viewDidLayoutSubviews{
-    if (IS_IPAD) {
-        
-        [self.timeButton setImage:[UIImage imageNamed:@"timeButton_IPad"] forState:UIControlStateNormal];
-//        [self.arcadeButton setImage:[UIImage imageNamed:@"arcadeButton_IPad"] forState:UIControlStateNormal];
-        
-        [self.gameCenterButton setImage:[UIImage imageNamed:@"trophy_IPad"] forState:UIControlStateNormal];
-        [self.settingButton setImage:[UIImage imageNamed:@"setting_IPad"] forState:UIControlStateNormal];
-    }
+    
     
     self.bonuseButton.layer.cornerRadius = self.bonuseButton.frame.size.height/2;
     self.bonuseButton.layer.borderWidth = 2;
@@ -115,6 +109,14 @@
 
 - (IBAction)reportScore:(UIButton *)sender {
     [[GameKitHelper sharedGameKitHelper] reportScore:[sender.titleLabel.text intValue]];
+}
+
+- (IBAction)rate:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/app/%@",[[NSBundle mainBundle] objectForInfoDictionaryKey:@"App_ID"]]]];
+}
+
+- (IBAction)moreGames:(id)sender {
+    [[AdHelper sharedManager] showMoreGames];
 }
 
 - (IBAction)playTimeAttack:(id)sender {

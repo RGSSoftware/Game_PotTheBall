@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSUInteger, GameState) {
-    GameStatePrepareStart
+    GameStatePrepareStart,
+    GameStatePlaying
 };
 
 typedef NS_ENUM(NSUInteger, GameMode) {
@@ -26,19 +27,21 @@ typedef NS_ENUM(NSUInteger, GameMode) {
 @property (nonatomic)GameState gameState;
 @property (nonatomic)GameMode gameMode;
 
-- (IBAction)printSubViews:(id)sender;
+
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *countDownLabel;
 - (IBAction)rotate:(id)sender;
--(void)start;
+
 
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *hudComponentViews;
 
 - (IBAction)startGame:(id)sender;
+- (IBAction)restartGame:(id)sender;
 
 - (IBAction)home:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *bonusBalls;
 
+- (IBAction)activateBonus:(id)sender;
 
 @end
 

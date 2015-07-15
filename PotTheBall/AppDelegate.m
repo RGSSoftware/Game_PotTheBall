@@ -47,6 +47,11 @@
     
     // get changes that might have happened while this
     // instance of your app wasn't running
+    
+//    double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
+//    [[NSUbiquitousKeyValueStore defaultStore] setDouble:10 forKey:@"BonusBallsCount"];
+//    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+    
     [[NSUbiquitousKeyValueStore defaultStore] synchronize];
     
     NSLog(@"simple print--lunach---bonus count------{%f}", [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]);

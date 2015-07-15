@@ -46,17 +46,6 @@ typedef enum SettingButton : NSUInteger {
         [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:@"enableVibration"];
     }
     
-    if (IS_IPAD) {
-        [self.soundButton setImage:[UIImage imageNamed:@"sound_IPad"] forState:UIControlStateNormal];
-        [self.vibrationButton setImage:[UIImage imageNamed:@"vibration_IPad"] forState:UIControlStateNormal];
-        
-        [self.soundButton setImage:[UIImage imageNamed:@"sound_IPad_selected"] forState:UIControlStateSelected];
-        [self.vibrationButton setImage:[UIImage imageNamed:@"vibration_IPad_selected"] forState:UIControlStateSelected];
-        
-        [self.closeButton setImage:[UIImage imageNamed:@"close_IPad"] forState:UIControlStateNormal];
-        
-    }
-    
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
     
 }

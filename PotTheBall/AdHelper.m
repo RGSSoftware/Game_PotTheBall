@@ -24,7 +24,7 @@
 
 @property BOOL testMode;
 
-
+@property (nonatomic, strong)void(^rewardVideoSuccess)(BOOL success);
 @end
 
 @implementation AdHelper
@@ -112,22 +112,20 @@
 -(void)loadAdNetworks{
     if (![[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appId"] isEqualToString:@""] &&
         ![[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"] isEqualToString:@""]) {
-        [Chartboost startWithAppId:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appId"]
-                      appSignature:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"]
-                          delegate:self];
-        
-        if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
-            //        if([Chartboost hasRewardedVideo:CBLocationIAPStore]) {
-            
-            [Chartboost cacheRewardedVideo:CBLocationIAPStore];
-            //        }
-        }
+//        [Chartboost startWithAppId:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appId"]
+//                      appSignature:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"]
+//                          delegate:self];
+//        [Chartboost cacheMoreApps:CBLocationMainMenu];
+//        if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
+//            //        if([Chartboost hasRewardedVideo:CBLocationIAPStore]) {
+//            
+//            [Chartboost cacheRewardedVideo:CBLocationIAPStore];
+//            //        }
+//        }
         
     }
     
     
-    
-
 }
 
 +(BOOL)shouldShowInterstitialOnStartUp{
@@ -154,6 +152,9 @@
 +(BOOL)shouldShowChartboostInterstitialOnEnterForeground{
     return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue] ;
 }
++(BOOL)shouldShowRewardAfterGameOver{
+    return [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"showRewardAfterGameOver"] boolValue];
+}
 
 
 -(void)showAdmobInterstitial{
@@ -172,6 +173,7 @@
 }
 
 -(void)showRewardVideoWithSuccessBlock:(void (^)(BOOL))successBlock{
+    self.rewardVideoSuccess = successBlock;
     if (self.testMode) {
         if (successBlock) {
             successBlock(YES);
@@ -198,11 +200,19 @@
 
 - (void)didCompleteRewardedVideo:(CBLocation)location
                       withReward:(int)reward{
+    if (self.rewardVideoSuccess) {
+        self.rewardVideoSuccess(YES);
+        self.rewardVideoSuccess = nil;
+    }
     
     NSLog(@"simple print-----compete------{}");
 }
 - (void)didCloseRewardedVideo:(CBLocation)location{
     NSLog(@"simple print-----close------{}");
+}
+
+-(void)showMoreGames{
+    [Chartboost showMoreApps:CBLocationMainMenu];
 }
 
 

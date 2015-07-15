@@ -85,14 +85,6 @@
     
     self.overlayView.layer.cornerRadius = 20;
     
-    if (IS_IPAD) {
-        for (UIImageView *imageView in self.powerBallImages) {
-            [imageView setImage:[UIImage imageNamed:@"powerBallInventory_IPad"]];
-        }
-        
-        [self.closeButton setImage:[UIImage imageNamed:@"close_IPad"] forState:UIControlStateNormal];
-    }
-    
     for (UIView *view in self.priceButtons) {
         view.layer.cornerRadius = view.frame.size.height/2;
     }

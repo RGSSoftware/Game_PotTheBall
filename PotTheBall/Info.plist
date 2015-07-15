@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>App_ID</key>
+	<string>1014631396</string>
 	<key>Email_Config</key>
 	<dict>
 		<key>shareMessage</key>
@@ -19,6 +21,8 @@
 	</dict>
 	<key>Ad_Config</key>
 	<dict>
+		<key>showRewardAfterGameOver</key>
+		<true/>
 		<key>Admob_Config</key>
 		<dict>
 			<key>Interstitial</key>
@@ -34,7 +38,7 @@
 		<key>Chatboost_Config</key>
 		<dict>
 			<key>showRewardVideos</key>
-			<false/>
+			<true/>
 			<key>Interstitial</key>
 			<dict>
 				<key>showOnStartUp</key>

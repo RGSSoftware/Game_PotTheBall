@@ -20,6 +20,9 @@
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="multiPlayBall" translatesAutoresizingMaskIntoConstraints="NO" id="Cvu-5F-Zxq">
                                 <rect key="frame" x="268" y="268" width="64" height="64"/>
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                    <rect key="frame" x="385" y="385" width="32" height="32"/>
+                                </variation>
                             </imageView>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="ring" translatesAutoresizingMaskIntoConstraints="NO" id="SQX-fP-1zO">
                                 <rect key="frame" x="142" y="142" width="316" height="316"/>
@@ -120,6 +123,9 @@
                                         <exclude reference="n9s-Oc-q16"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="restartGame:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aTt-UT-SXH"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dxE-ot-pN5">
                                 <rect key="frame" x="244" y="468" width="112" height="48"/>
@@ -143,6 +149,9 @@
                                 <variation key="heightClass=regular-widthClass=regular">
                                     <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 </variation>
+                                <connections>
+                                    <action selector="activateBonus:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Xa1-Ra-XBF"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="esD-ek-U3n">
                                 <rect key="frame" x="125" y="423" width="110" height="110"/>
@@ -493,19 +502,6 @@
                                     <segue destination="vXV-KB-GGR" kind="show" id="CmP-RF-Fvs"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="neW-84-3dv">
-                                <rect key="frame" x="263" y="462" width="74" height="48"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="WfA-OH-WJB"/>
-                                    <constraint firstAttribute="width" constant="74" id="ldD-do-dSH"/>
-                                </constraints>
-                                <state key="normal" title="RATE">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="heightClass=regular-widthClass=regular">
-                                    <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                </variation>
-                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DDY-rn-cfL">
                                 <rect key="frame" x="-104" y="-129" width="808" height="300"/>
                                 <color key="backgroundColor" red="0.094117647058823528" green="0.13725490196078433" blue="0.18431372549019609" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -513,8 +509,43 @@
                                     <constraint firstAttribute="height" constant="300" id="Xf4-LJ-IOb"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YuA-nr-Oyb">
-                                <rect key="frame" x="166" y="459" width="72" height="53"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="neW-84-3dv">
+                                <rect key="frame" x="249" y="459" width="69" height="48"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="WfA-OH-WJB">
+                                        <variation key="heightClass=regular-widthClass=regular" constant="79"/>
+                                    </constraint>
+                                    <constraint firstAttribute="width" constant="69" id="ldD-do-dSH">
+                                        <variation key="heightClass=regular-widthClass=regular" constant="100"/>
+                                    </constraint>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <state key="normal" title="RATE">
+                                    <color key="titleColor" red="0.1125138747" green="0.64492815309999996" blue="0.29125213230000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                </variation>
+                                <connections>
+                                    <action selector="rate:" destination="9OE-BP-2KY" eventType="touchUpInside" id="aea-LC-2sf"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l2R-fj-dFT">
+                                <rect key="frame" x="331" y="459" width="69" height="48"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <state key="normal" title="GAMES">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                </variation>
+                                <connections>
+                                    <action selector="moreGames:" destination="9OE-BP-2KY" eventType="touchUpInside" id="wEY-nu-xaZ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YuA-nr-Oyb">
+                                <rect key="frame" x="166" y="458" width="72" height="53"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="72" id="6m8-Af-kpw" userLabel="Width - (100) - Button">
                                         <variation key="heightClass=regular-widthClass=regular" constant="100"/>
@@ -530,8 +561,8 @@
                                     <action selector="showLeaderboard:" destination="9OE-BP-2KY" eventType="touchUpInside" id="BSw-pq-ygc"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oVG-G1-8ZW">
-                                <rect key="frame" x="363" y="459" width="72" height="53"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oVG-G1-8ZW">
+                                <rect key="frame" x="363" y="458" width="72" height="53"/>
                                 <state key="normal" image="setting">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -539,22 +570,26 @@
                                     <segue destination="NoR-zr-9jK" kind="presentation" modalPresentationStyle="overFullScreen" id="Iof-Ma-3JJ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jDV-3J-lJE">
-                                <rect key="frame" x="277" y="517" width="46" height="30"/>
-                                <state key="normal" title="30">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.094117647058823528" green="0.13725490196078433" blue="0.18431372549019609" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="l2R-fj-dFT" firstAttribute="leading" secondItem="neW-84-3dv" secondAttribute="trailing" constant="13" id="2iH-wP-SFl"/>
                             <constraint firstAttribute="centerX" secondItem="DDY-rn-cfL" secondAttribute="centerX" id="80U-Qc-H4t"/>
                             <constraint firstAttribute="centerX" secondItem="mYd-sn-2ca" secondAttribute="centerX" constant="77" id="BRv-Rz-P02">
                                 <variation key="heightClass=regular-widthClass=regular" constant="127"/>
                             </constraint>
-                            <constraint firstItem="YuA-nr-Oyb" firstAttribute="top" secondItem="2tb-KE-92n" secondAttribute="bottom" constant="8" id="DdE-rX-Vcw"/>
+                            <constraint firstItem="l2R-fj-dFT" firstAttribute="centerY" secondItem="neW-84-3dv" secondAttribute="centerY" id="Cvg-64-HBF"/>
+                            <constraint firstItem="YuA-nr-Oyb" firstAttribute="top" secondItem="2tb-KE-92n" secondAttribute="bottom" constant="8" id="DdE-rX-Vcw">
+                                <variation key="heightClass=regular-widthClass=compact" constant="6"/>
+                            </constraint>
+                            <constraint firstItem="l2R-fj-dFT" firstAttribute="height" secondItem="neW-84-3dv" secondAttribute="height" id="E7P-Dz-j9Y"/>
+                            <constraint firstItem="neW-84-3dv" firstAttribute="top" secondItem="2tb-KE-92n" secondAttribute="bottom" constant="9" id="GEW-0T-zme">
+                                <variation key="heightClass=regular-widthClass=regular" constant="18"/>
+                            </constraint>
                             <constraint firstAttribute="centerX" secondItem="vQP-sK-Qdz" secondAttribute="centerX" id="GsZ-fh-prp"/>
-                            <constraint firstItem="oVG-G1-8ZW" firstAttribute="top" secondItem="2tb-KE-92n" secondAttribute="bottom" constant="8" id="HEt-Rq-iSd"/>
+                            <constraint firstItem="oVG-G1-8ZW" firstAttribute="top" secondItem="2tb-KE-92n" secondAttribute="bottom" constant="8" id="HEt-Rq-iSd">
+                                <variation key="heightClass=regular-widthClass=compact" constant="6"/>
+                            </constraint>
                             <constraint firstItem="Bhl-RQ-WaC" firstAttribute="top" secondItem="uBT-wr-9QY" secondAttribute="bottom" constant="8" id="IFf-5s-91L"/>
                             <constraint firstAttribute="centerY" secondItem="mYd-sn-2ca" secondAttribute="centerY" id="Ikw-Ib-LA6">
                                 <variation key="heightClass=regular-widthClass=compact" constant="63"/>
@@ -574,20 +609,22 @@
                             <constraint firstAttribute="centerY" secondItem="vQP-sK-Qdz" secondAttribute="centerY" id="UNe-8W-qWY">
                                 <variation key="heightClass=regular-widthClass=compact" constant="-91.5"/>
                             </constraint>
+                            <constraint firstItem="l2R-fj-dFT" firstAttribute="width" secondItem="neW-84-3dv" secondAttribute="width" id="Xc9-yn-zKf"/>
                             <constraint firstAttribute="centerX" secondItem="oVG-G1-8ZW" secondAttribute="centerX" constant="-99" id="YLm-lX-mGh">
-                                <variation key="heightClass=regular-widthClass=regular" constant="-164"/>
+                                <variation key="heightClass=regular-widthClass=compact" constant="-118"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="-189"/>
                             </constraint>
                             <constraint firstAttribute="centerX" secondItem="2tb-KE-92n" secondAttribute="centerX" id="Yt3-gX-u5w"/>
-                            <constraint firstAttribute="centerX" secondItem="neW-84-3dv" secondAttribute="centerX" id="aBs-MJ-t8y"/>
-                            <constraint firstAttribute="centerX" secondItem="jDV-3J-lJE" secondAttribute="centerX" id="bjP-ci-Uim"/>
+                            <constraint firstAttribute="centerX" secondItem="neW-84-3dv" secondAttribute="centerX" constant="17" id="aBs-MJ-t8y">
+                                <variation key="heightClass=regular-widthClass=compact" constant="41"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="56"/>
+                            </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="2tb-KE-92n" secondAttribute="trailing" constant="-20" id="cql-FW-rik"/>
                             <constraint firstAttribute="centerY" secondItem="2tb-KE-92n" secondAttribute="centerY" constant="8.5" id="j6I-Dg-pu4">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-1"/>
                             </constraint>
                             <constraint firstItem="DDY-rn-cfL" firstAttribute="leading" secondItem="v26-p0-nce" secondAttribute="leadingMargin" constant="-120" id="kDd-qJ-fy1"/>
-                            <constraint firstItem="neW-84-3dv" firstAttribute="top" secondItem="2tb-KE-92n" secondAttribute="bottom" constant="11" id="o95-kP-dH9">
-                                <variation key="heightClass=regular-widthClass=regular" constant="24"/>
-                            </constraint>
+                            <constraint firstItem="l2R-fj-dFT" firstAttribute="centerY" secondItem="neW-84-3dv" secondAttribute="centerY" id="l11-5r-b8k"/>
                             <constraint firstAttribute="centerX" secondItem="uBT-wr-9QY" secondAttribute="centerX" constant="-78" id="pxo-Iv-HFc">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-128"/>
                             </constraint>
@@ -600,10 +637,10 @@
                             <constraint firstAttribute="centerY" secondItem="vQP-sK-Qdz" secondAttribute="centerY" id="vl3-uZ-28C">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-152"/>
                             </constraint>
-                            <constraint firstItem="jDV-3J-lJE" firstAttribute="top" secondItem="neW-84-3dv" secondAttribute="bottom" constant="8" id="vty-hL-daP"/>
                             <constraint firstItem="oVG-G1-8ZW" firstAttribute="height" secondItem="YuA-nr-Oyb" secondAttribute="height" id="wFU-Va-81k"/>
                             <constraint firstAttribute="centerX" secondItem="YuA-nr-Oyb" secondAttribute="centerX" constant="98" id="wo7-UQ-shl">
-                                <variation key="heightClass=regular-widthClass=regular" constant="163"/>
+                                <variation key="heightClass=regular-widthClass=compact" constant="117"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="189"/>
                             </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="DDY-rn-cfL" secondAttribute="trailing" constant="-120" id="xGf-Qi-vDh"/>
                         </constraints>
@@ -629,7 +666,6 @@
                     <navigationItem key="navigationItem" id="9vM-Ol-bEK"/>
                     <connections>
                         <outlet property="arcadeButton" destination="uBT-wr-9QY" id="e2Z-oo-ZGx"/>
-                        <outlet property="ballcountbutton" destination="jDV-3J-lJE" id="tuz-b6-zEj"/>
                         <outlet property="bonuseButton" destination="vQP-sK-Qdz" id="x12-nr-YXs"/>
                         <outlet property="gameCenterButton" destination="YuA-nr-Oyb" id="N0V-nC-IhL"/>
                         <outlet property="middleView" destination="2tb-KE-92n" id="9iZ-BJ-rHZ"/>
@@ -856,6 +892,7 @@
                         <outletCollection property="MenuButtons" destination="Zcd-lL-bgC" id="5uS-H1-ih8"/>
                         <segue destination="pH1-Dl-xJC" kind="unwind" identifier="unwindFromGameOverMenuToMainMenu" unwindAction="unwindToMainMenu:" id="V9L-HW-WS3"/>
                         <segue destination="pH1-Dl-xJC" kind="unwind" identifier="unwindFromGameOverMenuToGameBoard" unwindAction="unwindToGameBoard:" id="R6S-fl-mNn"/>
+                        <segue destination="D9e-QV-hZY" kind="presentation" identifier="fromGameOverToRewards" modalPresentationStyle="overFullScreen" id="pCD-gE-xiG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hj6-ZQ-zm2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1249,25 +1286,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="powerBall" translatesAutoresizingMaskIntoConstraints="NO" id="1DU-vP-2h1">
-                                <rect key="frame" x="235" y="87" width="131" height="131"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="262" id="MUB-jv-3tN"/>
-                                    <constraint firstAttribute="width" constant="262" id="f3I-99-eJO"/>
-                                </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="MUB-jv-3tN"/>
-                                        <exclude reference="f3I-99-eJO"/>
-                                    </mask>
-                                </variation>
-                                <variation key="heightClass=regular-widthClass=regular">
-                                    <mask key="constraints">
-                                        <include reference="MUB-jv-3tN"/>
-                                        <include reference="f3I-99-eJO"/>
-                                    </mask>
-                                </variation>
-                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E1r-pX-BW5">
                                 <rect key="frame" x="150" y="262" width="300" height="2"/>
                                 <color key="backgroundColor" red="0.053281494025343656" green="0.074840169709400703" blue="0.10353697062841527" alpha="1" colorSpace="calibratedRGB"/>
@@ -1285,8 +1303,8 @@
                                     </mask>
                                 </variation>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Power Ball" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DsG-if-F5a">
-                                <rect key="frame" x="279" y="226" width="42" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Power Ball" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DsG-if-F5a">
+                                <rect key="frame" x="243" y="226" width="114" height="28"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="23"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -1294,8 +1312,8 @@
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="33"/>
                                 </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="In a few seconds any appearing balls becomes bonus. Increase you chance to win." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xRY-Zw-Vcn">
-                                <rect key="frame" x="274" y="265" width="42" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="In a few seconds any appearing balls becomes bonus. Increase you chance to win." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xRY-Zw-Vcn">
+                                <rect key="frame" x="175" y="274" width="250" height="61"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="250" id="RWD-PB-6og">
                                         <variation key="heightClass=regular-widthClass=regular" constant="400"/>
@@ -1309,8 +1327,8 @@
                                     <rect key="frame" x="220" y="384" width="350" height="79"/>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ee4-9r-6Fm">
-                                <rect key="frame" x="175" y="294" width="250" height="55"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ee4-9r-6Fm">
+                                <rect key="frame" x="175" y="351" width="250" height="55"/>
                                 <color key="backgroundColor" red="0.13333333333333333" green="0.70980392156862748" blue="0.45098039215686275" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="55" id="lEH-DA-KSu">
@@ -1334,8 +1352,8 @@
                                     <segue destination="Rvk-k8-6qO" kind="presentation" modalPresentationStyle="overFullScreen" id="MmO-Iu-0tP"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Get for FREE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lsl-wB-Utl">
-                                <rect key="frame" x="274" y="357" width="42" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Get for FREE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lsl-wB-Utl">
+                                <rect key="frame" x="250" y="422" width="101" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.34907909712397422" green="0.52657563308401523" blue="0.75919325983589458" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -1344,8 +1362,8 @@
                                     <rect key="frame" x="344" y="554" width="101" height="21"/>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SPH-v4-70E">
-                                <rect key="frame" x="363" y="389" width="75" height="75"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SPH-v4-70E">
+                                <rect key="frame" x="363" y="454" width="75" height="75"/>
                                 <color key="backgroundColor" red="0.1529411765" green="0.21960784310000001" blue="0.29411764709999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="75" id="Pvv-r8-LVQ">
@@ -1365,8 +1383,8 @@
                                     <action selector="showTwitter:" destination="vXV-KB-GGR" eventType="touchUpInside" id="Omb-bc-DfN"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ucY-x2-grd">
-                                <rect key="frame" x="263" y="390" width="75" height="75"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ucY-x2-grd">
+                                <rect key="frame" x="263" y="455" width="75" height="75"/>
                                 <color key="backgroundColor" red="0.1529411765" green="0.21960784310000001" blue="0.29411764709999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="75" id="1Ts-HK-Od3">
@@ -1376,14 +1394,14 @@
                                         <variation key="heightClass=regular-widthClass=regular" constant="150"/>
                                     </constraint>
                                 </constraints>
-                                <state key="normal" image="facebook">
+                                <state key="normal" image="playVideo">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
                                     <rect key="frame" x="325" y="593" width="150" height="150"/>
                                 </variation>
                                 <connections>
-                                    <action selector="showFacebook:" destination="vXV-KB-GGR" eventType="touchUpInside" id="I7G-pF-OSc"/>
+                                    <segue destination="D9e-QV-hZY" kind="presentation" modalPresentationStyle="overFullScreen" id="msf-h7-0kU"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H2G-1T-Uko">
@@ -1404,8 +1422,8 @@
                                     <action selector="back:" destination="vXV-KB-GGR" eventType="touchUpInside" id="FZG-Py-oqH"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LKf-bf-ixg">
-                                <rect key="frame" x="163" y="390" width="75" height="75"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LKf-bf-ixg">
+                                <rect key="frame" x="163" y="455" width="75" height="75"/>
                                 <color key="backgroundColor" red="0.15294117647058825" green="0.2196078431372549" blue="0.29411764705882354" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="75" id="Ob1-OL-trv">
@@ -1415,7 +1433,7 @@
                                         <variation key="heightClass=regular-widthClass=regular" constant="150"/>
                                     </constraint>
                                 </constraints>
-                                <state key="normal" image="playVideo">
+                                <state key="normal" image="facebook">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
@@ -1423,13 +1441,31 @@
                                 </variation>
                                 <connections>
                                     <action selector="showVideo:" destination="vXV-KB-GGR" eventType="touchUpInside" id="qHs-Zt-wra"/>
-                                    <segue destination="D9e-QV-hZY" kind="presentation" modalPresentationStyle="overFullScreen" id="6pZ-xT-Hqo"/>
                                 </connections>
                             </button>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="powerBall" translatesAutoresizingMaskIntoConstraints="NO" id="1DU-vP-2h1">
+                                <rect key="frame" x="235" y="87" width="131" height="131"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="262" id="MUB-jv-3tN"/>
+                                    <constraint firstAttribute="width" constant="262" id="f3I-99-eJO"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="MUB-jv-3tN"/>
+                                        <exclude reference="f3I-99-eJO"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <mask key="constraints">
+                                        <include reference="MUB-jv-3tN"/>
+                                        <include reference="f3I-99-eJO"/>
+                                    </mask>
+                                </variation>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.090569202811866534" green="0.12721517353963696" blue="0.17599470628415304" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="xRY-Zw-Vcn" firstAttribute="centerX" secondItem="ee4-9r-6Fm" secondAttribute="centerX" constant="-5" id="3aQ-cu-FWo">
+                            <constraint firstItem="xRY-Zw-Vcn" firstAttribute="centerX" secondItem="ee4-9r-6Fm" secondAttribute="centerX" id="3aQ-cu-FWo">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-4"/>
                             </constraint>
                             <constraint firstItem="E1r-pX-BW5" firstAttribute="top" secondItem="DsG-if-F5a" secondAttribute="bottom" constant="8" id="5bp-JS-Qai"/>
@@ -1445,10 +1481,10 @@
                             <constraint firstItem="SPH-v4-70E" firstAttribute="top" secondItem="Lsl-wB-Utl" secondAttribute="bottom" constant="11" id="N7Z-Zp-pHs">
                                 <variation key="heightClass=regular-widthClass=regular" constant="17"/>
                             </constraint>
-                            <constraint firstItem="Lsl-wB-Utl" firstAttribute="centerX" secondItem="ee4-9r-6Fm" secondAttribute="centerX" constant="-5" id="R0Z-OR-uDe"/>
+                            <constraint firstItem="Lsl-wB-Utl" firstAttribute="centerX" secondItem="ee4-9r-6Fm" secondAttribute="centerX" constant="0.5" id="R0Z-OR-uDe"/>
                             <constraint firstItem="E1r-pX-BW5" firstAttribute="leading" secondItem="A4c-yY-GQg" secondAttribute="leadingMargin" constant="-16" id="Sxa-9U-7ol"/>
                             <constraint firstItem="Lsl-wB-Utl" firstAttribute="top" secondItem="ee4-9r-6Fm" secondAttribute="bottom" constant="16" id="U1z-6o-nZC"/>
-                            <constraint firstItem="xRY-Zw-Vcn" firstAttribute="centerX" secondItem="E1r-pX-BW5" secondAttribute="centerX" constant="-5" id="Y76-Fq-U53"/>
+                            <constraint firstItem="xRY-Zw-Vcn" firstAttribute="centerX" secondItem="E1r-pX-BW5" secondAttribute="centerX" id="Y76-Fq-U53"/>
                             <constraint firstItem="ee4-9r-6Fm" firstAttribute="top" secondItem="xRY-Zw-Vcn" secondAttribute="bottom" constant="16" id="am5-T5-d48"/>
                             <constraint firstItem="H2G-1T-Uko" firstAttribute="top" secondItem="A4c-yY-GQg" secondAttribute="topMargin" id="dS3-9K-ZOx"/>
                             <constraint firstAttribute="centerX" secondItem="E1r-pX-BW5" secondAttribute="centerX" id="jq6-FH-Omm"/>
@@ -1475,12 +1511,10 @@
                     </view>
                     <connections>
                         <outlet property="backArrow" destination="H2G-1T-Uko" id="k5m-gH-hUe"/>
-                        <outlet property="facebookButton" destination="ucY-x2-grd" id="ERm-oG-mHn"/>
                         <outlet property="lineView" destination="E1r-pX-BW5" id="dns-M4-Ptr"/>
                         <outlet property="powerBallImage" destination="1DU-vP-2h1" id="phD-gD-M9X"/>
                         <outlet property="purchaseButton" destination="ee4-9r-6Fm" id="bbl-IM-ue5"/>
-                        <outlet property="twitterButton" destination="SPH-v4-70E" id="MX1-6Y-P3k"/>
-                        <outlet property="videoButton" destination="LKf-bf-ixg" id="2vr-ZN-tB8"/>
+                        <outlet property="videoButton" destination="ucY-x2-grd" id="52X-Ed-X4o"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CIJ-0Z-2Ky" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1970,8 +2004,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Is3-wf-dXm">
-                                <rect key="frame" x="96" y="127" width="408" height="345"/>
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Is3-wf-dXm">
+                                <rect key="frame" x="96" y="128" width="408" height="345"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Do you want to watch a video to get additional Power Balls?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s4G-AS-Ysh">
                                         <rect key="frame" x="72" y="32" width="264" height="41"/>
@@ -2030,7 +2064,7 @@
                                             </mask>
                                         </variation>
                                         <variation key="heightClass=regular-widthClass=regular">
-                                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                         </variation>
                                         <connections>
                                             <action selector="showVideo:" destination="D9e-QV-hZY" eventType="touchUpInside" id="Xrv-qe-GCa"/>
@@ -2044,7 +2078,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <variation key="heightClass=regular-widthClass=regular">
-                                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="40"/>
                                         </variation>
                                         <connections>
                                             <action selector="close:" destination="D9e-QV-hZY" eventType="touchUpInside" id="2Ua-nk-RdJ"/>
@@ -2190,4 +2224,7 @@
         <image name="vibration" width="64" height="53"/>
         <image name="vibration_selected" width="64" height="53"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="msf-h7-0kU"/>
+    </inferredMetricsTieBreakers>
 </document>

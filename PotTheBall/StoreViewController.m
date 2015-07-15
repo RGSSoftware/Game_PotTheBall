@@ -30,15 +30,7 @@
     [super viewDidLayoutSubviews];
     
     if (IS_IPAD) {
-        
-        [self.powerBallImage setImage:[UIImage imageNamed:@"powerBall_IPad"]];
-        
-        [self.videoButton setImage:[UIImage imageNamed:@"playVideo_IPad"] forState:UIControlStateNormal];
-        [self.facebookButton setImage:[UIImage imageNamed:@"facebook_IPad"] forState:UIControlStateNormal];
-        [self.twitterButton setImage:[UIImage imageNamed:@"twitter_IPad"] forState:UIControlStateNormal];
-        
-        [self.backArrow  setImage:[UIImage imageNamed:@"backArrow_IPad"] forState:UIControlStateNormal];
-
+    
         self.lineView.layer.cornerRadius = 2;
 
     } else {

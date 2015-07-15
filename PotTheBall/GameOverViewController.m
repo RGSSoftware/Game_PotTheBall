@@ -13,6 +13,8 @@
 #import "MainGameBoardViewController.h"
 #import "GameKitHelper.h"
 
+#import "AdHelper.h"
+
 @interface GameOverViewController ()
 
 @end
@@ -37,6 +39,13 @@
         gameBoardViewController.gameState = GameStatePrepareStart;
     }
     
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    if ([AdHelper shouldShowRewardAfterGameOver]) {
+        [self performSegueWithIdentifier:@"fromGameOverToRewards" sender:self];
+    }
 }
 
 

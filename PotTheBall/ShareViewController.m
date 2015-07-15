@@ -29,13 +29,6 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    
-    if (IS_IPAD) {
-        
-        [self.closeButton setImage:[UIImage imageNamed:@"close_IPad"] forState:UIControlStateNormal];
-        
-    }
-    
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
     
 }

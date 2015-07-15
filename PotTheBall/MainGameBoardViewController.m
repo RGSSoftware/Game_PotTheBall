@@ -20,12 +20,19 @@
 #import "UIView+RemoveConstraints.h"
 
 #import "GameOverViewController.h"
+
+#import <BlocksKit/BlocksKit.h>
+
+const int startingCountDown = 5;
+
+#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
 @interface MainGameBoardViewController ()
 
 @property (nonatomic)BOOL isAnimation;
 
 @property (nonatomic, strong)NSMutableArray *balls;
 @property (nonatomic, strong)NSArray *ballImagesNames;
+@property NSString *powerBallImageName;
 
 @property (nonatomic, strong)NSMutableArray *colorSeg;
 
@@ -34,42 +41,87 @@
 
 
 @property (nonatomic, strong)NSTimer *countDownTimer;
+@property (nonatomic, strong)NSTimer *bonusDownTimer;
 @property int score;
 
 
 @property (nonatomic)int currentCountDown;
+@property (nonatomic)int bonusCountDown;
+@property (nonatomic)BOOL isBonusActivate;
+@property NSMutableArray *removeBalls;
+
+@property (nonatomic)BOOL isViewWillAppear;
+
+@property NSDictionary *currentlevel;
+@property int currentlevelNumber;
+@property int currentTurnCount;
+
+@property (nonatomic, strong)NSDictionary *levels;
+
 
 @end
 
 @implementation MainGameBoardViewController
-
+#pragma mark - View Handles
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-//    self.ball = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"multi-color"]];
-//    self.ball.tag = 0;
+    self.ballImagesNames = @[@"multiPlayBall",
+                             @"green",
+                             @"orange",
+                             @"red",
+                             @"blue"];
+    
+    self.powerBallImageName = @"multi-color";
+    
+    self.colorSeg = [@[@(3), @(1), @(4), @(2)] mutableCopy];
+    
+//    self.currentCountDown =;
+    
+    self.removeBalls = [NSMutableArray new];
+    self.isBonusActivate = NO;
+    self.isViewWillAppear = NO;
     
     
-    self.currentCountDown = 1;
+    
+    self.levels = @{ @(1) : @{@"turnCount":@(5),
+                              @"rotationProbability": [NSNull new]
+                              },
+                     @(2) : @{@"turnCount":@(8),
+                              @"rotationProbability":@(3)
+                              },
+                     @(3) : @{@"turnCount":@(10),
+                             @"rotationProbability":@(2)
+                             },
+                     @(4) : @{@"turnCount":@(20),
+                              @"rotationProbability":@(1)
+                              },
+                     @(5) : @{@"turnCount":@(INT_MAX),
+                              @"rotationProbability":@(0)
+                              },
+                     };
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+
 
 -(void)viewWillAppear:(BOOL)animated{
+    self.currentlevelNumber = 1;
+    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+    self.currentTurnCount = 1;
+    
+    
+    [super viewWillAppear:animated];
+    self.isViewWillAppear = YES;
+    
+    NSDictionary *imageData = [self randBallImage];
+    self.ball.image = [imageData objectForKey:@"image"];
+    self.ball.tag = [[imageData objectForKey:@"tag"] integerValue];
     if (self.gameState == GameStatePrepareStart) {
-//        for (UIView *view in self.hudComponentViews) {
-//            view.hidden = YES;
-//        }
         
         self.ball.hidden = YES;
         self.playButton.hidden = NO;
         
     
     [NSTimer bk_scheduledTimerWithTimeInterval:0.3 block:^(NSTimer *timer) {
-#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
         
         double rads = DEGREES_TO_RADIANS(-45);
         CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
@@ -85,43 +137,16 @@
     
 
             } repeats:NO];
-        
     }
     
-    
-    
-    
-
-}
-
-
--(void)viewDidAppear:(BOOL)animated{
-    if (self.gameState != GameStatePrepareStart) {
-        
-        
-        [self.view addSubview:self.ball];
-        
-        
-        self.balls = [NSMutableArray new];
-        [self.balls addObject:self.ball];
-        
-        
-        self.ballImagesNames = @[@"multi-color",
-                                 @"green",
-                                 @"orange",
-                                 @"red",
-                                 @"blue"];
-        
-        self.colorSeg = [@[@(3), @(1), @(4), @(2)] mutableCopy];
-        
-        
-        self.topBottomScreenOffset = CGRectGetHeight(self.ball.frame) * -1;
-        self.leftRightScreenOffset = (CGRectGetMinY(self.ball.frame) - CGRectGetMinX(self.ball.frame)) * -1;
-        
-        self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateCountDownLabel:) userInfo:nil repeats:YES];
-        
-        
+    for (UIView *view in self.balls) {
+        [view removeFromSuperview];
     }
+    
+    self.currentCountDown = startingCountDown;
+    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+    
+    [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
     
     
 }
@@ -129,56 +154,58 @@
 -(void)viewDidLayoutSubviews{
     [super viewWillLayoutSubviews];
     
-    self.bonusBalls.layer.cornerRadius = self.bonusBalls.frame.size.height/2;
-    CGRect rect = self.ball.frame;
     
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    if (self.isViewWillAppear) {
+        self.bonusBalls.layer.cornerRadius = self.bonusBalls.frame.size.height/2;
+
         CGRect rect = self.ball.frame;
-        NSLog(@"simple print-----rect------{%@}", NSStringFromCGRect(self.ball.frame));
-//        [self.ball removeAllConstraints];
-        self.ball = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"multiPlayBall"]];
+        
+        self.ball = [[UIImageView alloc] initWithImage:self.ball.image];
+        self.ball.tag = self.ball.tag;
         self.ball.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2 - CGRectGetWidth(rect)/2, CGRectGetHeight(self.view.frame)/2 - CGRectGetHeight(rect)/2, CGRectGetWidth(rect), CGRectGetHeight(rect));
-//        self.ball.frame = rect;
-    });
-
-    
-    
-//    for (NSLayoutConstraint *constraint in self.ball.constraints) {
-//    }
-//    self.ball.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2 - (56/2), CGRectGetHeight(self.view.frame)/2 - (56/2), 56, 56);
-}
-
-- (void)updateCountDownLabel:(NSTimer *)timer{
-    if (self.currentCountDown != 0) {
-        self.currentCountDown--;
         
-        self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
-    } else {
-        [timer invalidate];
-        
-        //gmae over
-        [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+        self.isViewWillAppear = NO;
     }
-        
     
+    
+    
+
+
 }
 
-- (void)animateFullScale:(UIView *)newBall {
-    [UIView mt_animateWithViews:@[newBall]
-                       duration:1
-                 timingFunction:kMTEaseOutElastic
-                     animations:^{
-                         newBall.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
-                         //                             self.organView.alpha = 1;
-                         
-                         
-                     }];
+#pragma mark - Ball Creation
+-(NSDictionary *)randBallImage{
+    if (self.isBonusActivate) {
+        return @{@"tag" : @(0), @"image" : [UIImage imageNamed:self.ballImagesNames[0]]};
+
+    } else {
+        int rand = arc4random_uniform(15);
+        
+        if (rand == 9) {
+            return @{@"tag" : @(0), @"image" : [UIImage imageNamed:self.ballImagesNames[0]]};
+            
+        } else {
+            rand = arc4random_uniform((int)[self.ballImagesNames count] - 1);
+            rand++;
+            
+            return @{@"tag" : @(rand), @"image" : [UIImage imageNamed:self.ballImagesNames[rand]]};
+        }
+
+    }
 }
+
+-(UIImageView *)newBallImageWithFrame:(CGRect)rect{
+    NSDictionary *imageData = [self randBallImage];
+    UIImageView *newBall = [[UIImageView alloc] initWithImage:[imageData objectForKey:@"image"]];
+    newBall.frame = rect;
+    newBall.tag = [[imageData objectForKey:@"tag"] integerValue];
+    newBall.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.5, 0.5);
+    return newBall;
+}
+
+#pragma mark - Touch Handles
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-//    super.continueTrackingWithTouch(touch, withEvent: event)
     
     [super touchesMoved:touches withEvent:event];
     
@@ -198,8 +225,6 @@
     }
     
     if (!self.isAnimation) {
-        
-
         
         if (currentl.x > previousl.x - xx &&
             currentl.x < previousl.x + xx &&
@@ -227,6 +252,7 @@
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
+                [self.removeBalls addObject:ball];
                 
                 [UIView animateWithDuration:.5 animations:^{
                     
@@ -265,6 +291,7 @@
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
+                [self.removeBalls addObject:ball];
                 
                 [UIView animateWithDuration:.5 animations:^{
                     [ball setFrameOriginX:self.leftRightScreenOffset];
@@ -304,6 +331,7 @@
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
+                [self.removeBalls addObject:ball];
                 
                 [UIView animateWithDuration:.5 animations:^{
                     
@@ -343,6 +371,7 @@
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
+                [self.removeBalls addObject:ball];
                 
                 [UIView animateWithDuration:.5 animations:^{
                     
@@ -363,24 +392,48 @@
     }
     
 }
-
--(UIImageView *)newBallImageWithFrame:(CGRect)rect{
-    int rand = arc4random_uniform([self.ballImagesNames count]);
-    UIImageView *newBall = [[UIImageView alloc] initWithImage:[UIImage imageNamed:self.ballImagesNames[rand]]];
-    newBall.frame = rect;
-    newBall.tag = rand;
-    newBall.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.5, 0.5);
-    return newBall;
-}
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
-    self.isAnimation = NO;
+    
+    if (!self.isBonusActivate) {
+        
+        if (self.isAnimation) {
+            
+            if (self.currentTurnCount != [[self.currentlevel objectForKey:@"turnCount"] integerValue]) {
+                self.currentTurnCount++;
+                
+                if (![[self.currentlevel objectForKey:@"rotationProbability"] isKindOfClass:[NSNull class]]) {
+                    int rand = arc4random_uniform((int)[[self.currentlevel objectForKey:@"rotationProbability"] integerValue]);
+                    if (rand == 0) {
+                        int randRotation = arc4random_uniform(3) + 1;
+                        
+                        if (arc4random_uniform(2) == 0) {
+                            [self rotateRingLeftTurns:randRotation];
+                            [self rotateColorSegLeftTurns:randRotation];
+                        } else {
+                            [self rotateRingRightTurns:randRotation];
+                            [self rotateColorSegRightTurns:randRotation];
+                        }
+                    }
+                    
+                }
+            } else {
+                if (self.currentTurnCount == [[self.currentlevel objectForKey:@"turnCount"] integerValue]) {
+                    self.currentTurnCount = 1;
+                    self.currentlevelNumber++;
+                    self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+                }
+            }
+            
+        }
+    }
+    
+     self.isAnimation = NO;
 }
 
-- (IBAction)printSubViews:(id)sender {
-    NSLog(@"simple print-----subView------{%@}", self.view.subviews);
-}
+
+#pragma mark - Rotation
+
 - (IBAction)rotate:(id)sender {
-#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
     
     double rads = DEGREES_TO_RADIANS(-90);
     CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
@@ -393,10 +446,26 @@
     NSLog(@"simple print-----after------{%@}", self.colorSeg);
 }
 
+-(void)rotateRingRightTurns:(int)truns{
+    double rads = DEGREES_TO_RADIANS(90 * truns);
+    CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
+    [UIView animateWithDuration:.3 animations:^{
+        self.ring.transform = transform;
+    }];
+}
+
+-(void)rotateRingLeftTurns:(int)truns{
+    double rads = DEGREES_TO_RADIANS(-90 * truns);
+    CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
+    [UIView animateWithDuration:.3 animations:^{
+        self.ring.transform = transform;
+    }];
+}
+
 -(void)rotateColorSegRightTurns:(int)truns{
     id lastObject;
     for (int i = 0; i < truns; i++) {
-        for (int k = self.colorSeg.count; k != 0; k--) {
+        for (int k = (int)self.colorSeg.count; k != 0; k--) {
             if (k == self.colorSeg.count) {
                 lastObject = self.colorSeg.lastObject;
             } else if (k - 1 == 0){
@@ -428,27 +497,58 @@
         }
     }
 }
--(void)start{
-    
+
+
+#pragma mark - Segue
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.destinationViewController isKindOfClass:[GameOverViewController class]]) {
+        GameOverViewController *gameOverViewController = (GameOverViewController *)segue.destinationViewController;
+        
+        gameOverViewController.score = self.score;
+    }
+    //reset game
+    self.currentCountDown = startingCountDown;
+    self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+    self.score = 0;
+    self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
 }
+-(IBAction)unwindToGameBoard:(UIStoryboardSegue *)segue {
+}
+
+
+#pragma mark - Navigation
+- (IBAction)home:(id)sender {
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+
+#pragma mark - Helpers ()
+- (void)animateFullScale:(UIView *)newBall {
+    [UIView mt_animateWithViews:@[newBall]
+                       duration:1
+                 timingFunction:kMTEaseOutElastic
+                     animations:^{
+                         newBall.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                     }];
+}
+
 - (IBAction)startGame:(id)sender {
     if (self.gameState == GameStatePrepareStart) {
+        self.gameState = GameStatePlaying;
         self.ball.hidden = NO;
         self.playButton.hidden = YES;
-#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
+
         
         double rads = DEGREES_TO_RADIANS(45);
         CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
         CGAffineTransform scaleTrans  = CGAffineTransformScale(transform,
                                                                1.429, 1.429);
-        [UIView animateWithDuration:.5 animations:^{
+        [UIView animateWithDuration:.3 animations:^{
             self.ring.transform = scaleTrans;
             
         }];
         
-            [self rotateColorSegRightTurns:1];
-//        [self rotateColorSegLeftTurns:1];
-
+        [self rotateColorSegRightTurns:1];
         
         [self.view addSubview:self.ball];
         
@@ -457,34 +557,101 @@
         [self.balls addObject:self.ball];
         
         
-        self.ballImagesNames = @[@"multi-color",
-                                 @"green",
-                                 @"orange",
-                                 @"red",
-                                 @"blue"];
-        
-        self.colorSeg = [@[@(3), @(1), @(4), @(2)] mutableCopy];
-        
-        
         self.topBottomScreenOffset = CGRectGetHeight(self.ball.frame) * -1;
         self.leftRightScreenOffset = (CGRectGetMinY(self.ball.frame) - CGRectGetMinX(self.ball.frame)) * -1;
         
-        self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateCountDownLabel:) userInfo:nil repeats:YES];
-
-    }
-}
-
-- (IBAction)home:(id)sender {
-    [self.navigationController popToRootViewControllerAnimated:YES];
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.destinationViewController isKindOfClass:[GameOverViewController class]]) {
-        GameOverViewController *gameOverViewController = (GameOverViewController *)segue.destinationViewController;
         
-        gameOverViewController.score = self.score;
+        
+//        self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateCountDownLabel:) userInfo:nil repeats:YES];
+        
     }
 }
--(IBAction)unwindToGameBoard:(UIStoryboardSegue *)segue {
+
+- (IBAction)restartGame:(id)sender {
+    if (self.gameState != GameStatePrepareStart) {
+        self.gameState = GameStatePrepareStart;
+        self.currentlevelNumber = 1;
+        self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
+        self.currentTurnCount = 1;
+        
+        self.currentCountDown = startingCountDown;
+        self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+        self.score = 0;
+        self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
+        
+        self.ball.hidden = YES;
+        self.playButton.hidden = NO;
+        
+        
+        
+        double rads = DEGREES_TO_RADIANS(-45);
+        CGAffineTransform transform = CGAffineTransformRotate(self.ring.transform, rads);
+        CGAffineTransform scaleTrans  = CGAffineTransformScale(transform,
+                                                               .70, .70);
+        [UIView animateWithDuration:.4 animations:^{
+            self.ring.transform = scaleTrans;
+            
+        }];
+        
+        [self rotateColorSegLeftTurns:1];
+        
+        for (UIView *view in self.balls) {
+            [view removeFromSuperview];
+        }
+        
+        CGRect rect = self.ball.frame;
+        
+        self.ball = [[UIImageView alloc] initWithImage:self.ball.image];
+        self.ball.tag = self.ball.tag;
+        self.ball.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2 - CGRectGetWidth(rect)/2, CGRectGetHeight(self.view.frame)/2 - CGRectGetHeight(rect)/2, CGRectGetWidth(rect), CGRectGetHeight(rect));
+    }
+    
+}
+
+- (void)updateCountDownLabel:(NSTimer *)timer{
+    if (self.currentCountDown != 0) {
+        self.currentCountDown--;
+        
+        self.countDownLabel.text = NSStringFromInt(self.currentCountDown);
+    } else {
+        [timer invalidate];
+        
+        //gmae over
+        
+        [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+    }
+    
+    
+}
+- (IBAction)activateBonus:(id)sender {
+    if ([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"] > 0) {
+        double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
+        [[NSUbiquitousKeyValueStore defaultStore] setDouble:count - 1 forKey:@"BonusBallsCount"];
+        
+        [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
+        [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+
+        self.bonusCountDown = self.bonusCountDown + 10;
+        self.isBonusActivate = YES;
+        [((UIView *)self.balls[0]) removeFromSuperview];
+        self.balls[0] = [self newBallImageWithFrame:((UIView *)self.balls[0]).frame];
+        [self.view addSubview:self.balls[0]];
+        [self animateFullScale:self.balls[0]];
+        self.bonusDownTimer = [NSTimer bk_scheduledTimerWithTimeInterval:1 block:^(NSTimer *timer) {
+            if (self.bonusCountDown != 0) {
+                self.bonusCountDown--;
+                
+                self.isBonusActivate = YES;
+                
+               
+            } else {
+                self.isBonusActivate = NO;
+                [self.bonusDownTimer invalidate];
+                
+            }
+            
+        } repeats:YES];
+    }
+    
 }
 @end

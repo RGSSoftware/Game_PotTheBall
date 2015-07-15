@@ -24,6 +24,8 @@
 - (IBAction)showLeaderboard:(id)sender;
 
 - (IBAction)reportScore:(UIButton *)sender;
+- (IBAction)rate:(id)sender;
+- (IBAction)moreGames:(id)sender;
 
 - (IBAction)playTimeAttack:(id)sender;
 - (IBAction)playArcade:(id)sender;
