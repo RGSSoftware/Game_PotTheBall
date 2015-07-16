@@ -32,23 +32,19 @@ const int startingCountDown = 5;
 
 @property (nonatomic, strong)NSMutableArray *balls;
 @property (nonatomic, strong)NSArray *ballImagesNames;
-@property NSString *powerBallImageName;
 
 @property (nonatomic, strong)NSMutableArray *colorSeg;
 
 @property int topBottomScreenOffset;
 @property int leftRightScreenOffset;
 
-
 @property (nonatomic, strong)NSTimer *countDownTimer;
 @property (nonatomic, strong)NSTimer *bonusDownTimer;
 @property int score;
 
-
 @property (nonatomic)int currentCountDown;
 @property (nonatomic)int bonusCountDown;
 @property (nonatomic)BOOL isBonusActivate;
-@property NSMutableArray *removeBalls;
 
 @property (nonatomic)BOOL isViewWillAppear;
 
@@ -73,16 +69,11 @@ const int startingCountDown = 5;
                              @"red",
                              @"blue"];
     
-    self.powerBallImageName = @"multi-color";
-    
     self.colorSeg = [@[@(3), @(1), @(4), @(2)] mutableCopy];
-        
-    self.removeBalls = [NSMutableArray new];
+    
     self.isBonusActivate = NO;
     self.isViewWillAppear = NO;
-    
-    
-    
+   
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -233,7 +224,7 @@ const int startingCountDown = 5;
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
-                [self.removeBalls addObject:ball];
+                
                 
                 [UIView animateWithDuration:.5 animations:^{
                     
@@ -288,7 +279,7 @@ const int startingCountDown = 5;
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
-                [self.removeBalls addObject:ball];
+                
                 
                 [UIView animateWithDuration:.5 animations:^{
                     [ball setFrameOriginX:self.leftRightScreenOffset];
@@ -341,7 +332,7 @@ const int startingCountDown = 5;
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
-                [self.removeBalls addObject:ball];
+               
                 
                 [UIView animateWithDuration:.5 animations:^{
                     
@@ -394,7 +385,6 @@ const int startingCountDown = 5;
             if (!self.isAnimation) {
                 
                 self.isAnimation = YES;
-                [self.removeBalls addObject:ball];
                 
                 [UIView animateWithDuration:.5 animations:^{
                     
@@ -537,6 +527,8 @@ const int startingCountDown = 5;
         } else if (self.gameMode == GameModeArcade) {
             gameOverViewController.score = self.currentTurnCount - 1;
         }
+        
+        gameOverViewController.gameMode = self.gameMode;
     }
 }
 -(IBAction)unwindToGameBoard:(UIStoryboardSegue *)segue {
@@ -637,9 +629,8 @@ const int startingCountDown = 5;
         
         [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
     }
-    
-    
 }
+
 - (IBAction)activateBonus:(id)sender {
     if ([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"] > 0) {
         double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
@@ -672,8 +663,6 @@ const int startingCountDown = 5;
     
 }
 
-
-
 - (void)rotateRing {
     if (![[self.currentlevel objectForKey:@"rotationProbability"] isKindOfClass:[NSNull class]]) {
         int rand = arc4random_uniform((int)[[self.currentlevel objectForKey:@"rotationProbability"] integerValue]);
@@ -691,6 +680,7 @@ const int startingCountDown = 5;
         
     }
 }
+
 - (void)incrementWaveLevel {
     self.currentlevelNumber++;
     self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];

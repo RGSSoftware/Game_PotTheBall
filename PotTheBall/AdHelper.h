@@ -39,11 +39,17 @@ static NSString *const interstitialAdUnitID = @"ca-app-pub-3940256099942544/4411
 +(BOOL)shouldShowAdmobInterstitialOnEnterForeground;
 +(BOOL)shouldShowChartboostInterstitialOnEnterForeground;
 
++(BOOL)shouldShowInterstitialOnGameOver;
++(BOOL)shouldShowAdmobInterstitialOnGameOver;
++(BOOL)shouldShowChartboostInterstitialOnGameOver;
+
 +(BOOL)shouldShowRewardAfterGameOver;
 
 -(void)showAdmobInterstitial;
 -(void)showChartboostInterstitial;
--(void)showIAdsInterstitial;
+-(void)showChartboostGameOverInterstitial;
+-(void)showChartboostPauseInterstitial;
+
 
 -(void)showMoreGames;
 

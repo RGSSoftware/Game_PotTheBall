@@ -27,6 +27,8 @@
 		<dict>
 			<key>Interstitial</key>
 			<dict>
+				<key>showOnGameOver</key>
+				<false/>
 				<key>showOnStartUp</key>
 				<false/>
 				<key>showOnEnterForeground</key>
@@ -41,6 +43,8 @@
 			<true/>
 			<key>Interstitial</key>
 			<dict>
+				<key>showOnGameOver</key>
+				<true/>
 				<key>showOnStartUp</key>
 				<true/>
 				<key>showOnEnterForeground</key>
@@ -53,6 +57,8 @@
 		</dict>
 		<key>Interstitial</key>
 		<dict>
+			<key>showOnGameOver</key>
+			<true/>
 			<key>showOnStartUp</key>
 			<false/>
 			<key>showOnEnterForeground</key>

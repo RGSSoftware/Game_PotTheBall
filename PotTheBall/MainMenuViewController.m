@@ -104,11 +104,7 @@
 }
 
 - (IBAction)showLeaderboard:(id)sender {
-    [self presentViewController:[[GameKitHelper sharedGameKitHelper] leaderboardViewController] animated:YES completion:nil];
-}
-
-- (IBAction)reportScore:(UIButton *)sender {
-    [[GameKitHelper sharedGameKitHelper] reportScore:[sender.titleLabel.text intValue]];
+    [self presentViewController:[[GameKitHelper sharedManager] leaderboardViewController] animated:YES completion:nil];
 }
 
 - (IBAction)rate:(id)sender {

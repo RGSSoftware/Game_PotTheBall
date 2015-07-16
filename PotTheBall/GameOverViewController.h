@@ -7,13 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MainGameBoardViewController.h"
+
 
 @interface GameOverViewController : UIViewController
 
 @property int score;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *highScoreLabel;
 @property (weak, nonatomic) IBOutlet UIView *scoreBubbleView;
+
+@property (nonatomic)GameMode gameMode;
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *MenuButtons;
 

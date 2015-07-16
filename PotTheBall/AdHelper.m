@@ -112,16 +112,17 @@
 -(void)loadAdNetworks{
     if (![[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appId"] isEqualToString:@""] &&
         ![[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"] isEqualToString:@""]) {
-//        [Chartboost startWithAppId:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appId"]
-//                      appSignature:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"]
-//                          delegate:self];
-//        [Chartboost cacheMoreApps:CBLocationMainMenu];
-//        if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
-//            //        if([Chartboost hasRewardedVideo:CBLocationIAPStore]) {
-//            
-//            [Chartboost cacheRewardedVideo:CBLocationIAPStore];
-//            //        }
-//        }
+        [Chartboost startWithAppId:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appId"]
+                      appSignature:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"]
+                          delegate:self];
+        [Chartboost cacheMoreApps:CBLocationMainMenu];
+        [Chartboost cacheInterstitial:CBLocationStartup];
+        [Chartboost cacheInterstitial:CBLocationGameOver];
+        [Chartboost cacheInterstitial:CBLocationPause];
+        if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
+            
+            [Chartboost cacheRewardedVideo:CBLocationIAPStore];
+        }
         
     }
     
@@ -153,7 +154,22 @@
     return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue] ;
 }
 +(BOOL)shouldShowRewardAfterGameOver{
-    return [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"showRewardAfterGameOver"] boolValue];
+    if ([Chartboost hasRewardedVideo:CBLocationIAPStore]) {
+        return [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"showRewardAfterGameOver"] boolValue];
+    }
+    return NO;
+}
+
++(BOOL)shouldShowInterstitialOnGameOver{
+    return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnGameOver"] boolValue];
+}
+
++(BOOL)shouldShowAdmobInterstitialOnGameOver{
+    return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Admob_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnGameOver"] boolValue] ;
+}
+
++(BOOL)shouldShowChartboostInterstitialOnGameOver{
+    return [[[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnGameOver"] boolValue] ;
 }
 
 
@@ -171,6 +187,12 @@
 -(void)showChartboostInterstitial{
     [Chartboost showInterstitial:CBLocationStartup];
 }
+-(void)showChartboostGameOverInterstitial{
+    [Chartboost showInterstitial:CBLocationGameOver];
+}
+-(void)showChartboostPauseInterstitial{
+    [Chartboost showInterstitial:CBLocationPause];
+}
 
 -(void)showRewardVideoWithSuccessBlock:(void (^)(BOOL))successBlock{
     self.rewardVideoSuccess = successBlock;
@@ -181,10 +203,8 @@
         }
     } else {
         if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
-            //        if([Chartboost hasRewardedVideo:CBLocationIAPStore]) {
             
             [Chartboost showRewardedVideo:CBLocationIAPStore];
-            //        }
         }
         
     }

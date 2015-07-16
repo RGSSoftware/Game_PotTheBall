@@ -16,12 +16,6 @@
 
 #import <BlocksKit/BlocksKit.h>
 
-
-
-
-
-
-
 @interface AppDelegate ()
 @property BOOL enteringFromForeground;
 
@@ -49,10 +43,9 @@
     // instance of your app wasn't running
     
 //    double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
-//    [[NSUbiquitousKeyValueStore defaultStore] setDouble:10 forKey:@"BonusBallsCount"];
+//    [[NSUbiquitousKeyValueStore defaultStore] setDouble:55 forKey:@"BonusBallsCount"];
 //    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
     
-    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
     
     NSLog(@"simple print--lunach---bonus count------{%f}", [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]);
     
@@ -75,8 +68,13 @@
 {
     // Retrieve the changes from iCloud
     NSLog(@"simple print-----erferer bonus count------{%f}", [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]);
+    NSLog(@"simple print-----change value------{%@}", [notification.userInfo objectForKey:NSUbiquitousKeyValueStoreChangeReasonKey]);
     
+    UILabel *redSquare = [UILabel new];
+    redSquare.frame = CGRectMake(20, 20, 100, 100);
+    redSquare.backgroundColor = [UIColor redColor];
 
+    [self.window.rootViewController.view addSubview:redSquare];
 }
 
 - (BOOL) isICloudAvailable
@@ -113,7 +111,7 @@
                 [[AdHelper sharedManager] showAdmobInterstitial];
             }
             if ([AdHelper shouldShowChartboostInterstitialOnEnterForeground]) {
-                [[AdHelper sharedManager] showChartboostInterstitial];
+                [[AdHelper sharedManager] showChartboostPauseInterstitial];
             }
             
         } repeats:NO];

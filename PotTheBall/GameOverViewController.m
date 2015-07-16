@@ -15,21 +15,14 @@
 
 #import "AdHelper.h"
 
+#import <BlocksKit/BlocksKit.h>
+
 @interface GameOverViewController ()
 
 @end
 
 @implementation GameOverViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
@@ -43,6 +36,18 @@
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     
+//    [NSTimer bk_scheduledTimerWithTimeInterval:0.1 block:^(NSTimer *timer) {
+        if ([AdHelper shouldShowInterstitialOnGameOver]) {
+            if ([AdHelper shouldShowAdmobInterstitialOnGameOver]) {
+                [[AdHelper sharedManager] showAdmobInterstitial];
+            }
+            if ([AdHelper shouldShowChartboostInterstitialOnGameOver]) {
+                [[AdHelper sharedManager] showChartboostGameOverInterstitial];
+            }
+            
+        }
+//    } repeats:NO];
+   
     if ([AdHelper shouldShowRewardAfterGameOver]) {
         [self performSegueWithIdentifier:@"fromGameOverToRewards" sender:self];
     }
@@ -53,6 +58,29 @@
     [super viewWillAppear:animated];
     
     self.scoreLabel.text = NSStringFromInt(self.score);
+    self.messageLabel.text = @"TRAIN MORE!";
+    
+    int highScore;
+    if (self.gameMode == GameModeTimeAttack) {
+        highScore = [[GameKitHelper sharedManager] timeModeHighScore];
+        if (self.score > highScore) {
+            [[GameKitHelper sharedManager] reportTimeModeHighScore:self.score];
+            highScore = self.score;
+            self.messageLabel.text = @"AWESOME!";
+        }
+        
+    } else if (self.gameMode == GameModeArcade) {
+        highScore = [[GameKitHelper sharedManager] arcadeModeHighScore];
+        if (self.score > highScore) {
+            [[GameKitHelper sharedManager] reportArcadeModeHighScore:self.score];
+            highScore = self.score;
+            self.messageLabel.text = @"AWESOME!";
+        }
+       
+    }
+    self.highScoreLabel.text = NSStringFromInt(highScore);
+    
+    
 }
 -(void)viewDidLayoutSubviews{
     
@@ -64,10 +92,6 @@
     
 }
 
-
-- (IBAction)share:(id)sender {
-}
-
 - (IBAction)restart:(id)sender {
     [self performSegueWithIdentifier:@"unwindFromGameOverMenuToGameBoard" sender:self];
 }
@@ -77,6 +101,10 @@
 }
 
 - (IBAction)leaderboard:(id)sender {
-    [self presentViewController:[[GameKitHelper sharedGameKitHelper] leaderboardViewController] animated:YES completion:nil];
+    if (self.gameMode == GameModeTimeAttack) {
+        [self presentViewController:[[GameKitHelper sharedManager] timeModeleaderboardViewController] animated:YES completion:nil];
+    } else if (self.gameMode == GameModeArcade) {
+        [self presentViewController:[[GameKitHelper sharedManager] arcadeModeleaderboardViewController] animated:YES completion:nil];
+    }
 }
 @end
