@@ -5,5 +5,3 @@ Ring Revolution is an elegant game about speed, reflex, accuracy and concentrati
 Even though Ring Revolution spots a simple and flat design, it is really beautiful, colorful and pleasing on the eye.
 
 
-
-![screenshot1](http://i58.tinypic.com/nf4cxc.jpg)
