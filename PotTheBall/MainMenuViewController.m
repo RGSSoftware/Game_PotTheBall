@@ -55,7 +55,7 @@
 #define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
     
     double rads = DEGREES_TO_RADIANS(10);
-    CGAffineTransform transform = CGAffineTransformRotate(self.topView.transform, rads);
+//    CGAffineTransform transform = CGAffineTransformRotate(self.topView.transform, rads);
     self.topView.transform =  CGAffineTransformMakeRotation(rads);
     
 }

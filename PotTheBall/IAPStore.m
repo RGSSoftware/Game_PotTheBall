@@ -9,11 +9,19 @@
 #import "IAPStore.h"
 #import <StoreKit/StoreKit.h>
 #import "AppDelegate.h"
+#import "StoreInventoryViewController.h"
+#import "NSString+RGSInt.h"
+#import <BlocksKit/BlocksKit.h>
+
+#import <MBProgressHUD/MBProgressHUD.h>
+
 
 @interface IAPStore ()
 
 @property (nonatomic)SKProductsRequest *productRequest;
 @property (nonatomic, strong)void(^completionBlock)(NSDictionary *products, NSError *error);
+
+@property (nonatomic, strong)MBProgressHUD *hud;
 @end
 
 @implementation IAPStore
@@ -47,9 +55,6 @@
     self.productRequest = nil;
     NSLog(@"Loaded list of products...");
     
-    NSLog(@"simple print-----result.count------{%lu}", (unsigned long)response.products.count);
-    
-    
     NSArray * skProducts = response.products;
     for (SKProduct * skProduct in skProducts) {
         
@@ -82,23 +87,39 @@
     for (SKPaymentTransaction * transaction in transactions) {
         switch (transaction.transactionState)
         {
-            case SKPaymentTransactionStatePurchased:
-                //handle any trasaction here
+            case SKPaymentTransactionStatePurchased:{
+                if (!self.hud) {
+                    self.hud = [MBProgressHUD showHUDAddedTo:([self topViewControllerWithRootViewController:[self topViewController]]).view animated:YES];
+                }
+                self.hud.labelText = @"Purchase complete...";
+                [NSTimer bk_scheduledTimerWithTimeInterval:1 block:^(NSTimer *timer) {
+                    [self.hud hide:YES];
+                } repeats:NO];
+                
                 
                 [self completeTransaction:transaction];
-                break;
+            }break;
                 
-            case SKPaymentTransactionStateFailed:
+            case SKPaymentTransactionStateFailed:{
                 [self failedTransaction:transaction];
-                break;
+                if (!self.hud) {
+                    self.hud = [MBProgressHUD showHUDAddedTo:([self topViewControllerWithRootViewController:[self topViewController]]).view animated:YES];
+                }
+                self.hud.labelText = @"Error purchasing...";
+                [NSTimer bk_scheduledTimerWithTimeInterval:1 block:^(NSTimer *timer) {
+                     [self.hud hide:YES];
+                } repeats:NO];
+               
+            }break;
                 
             case SKPaymentTransactionStateRestored:
                 [self restoreTransaction:transaction];
                 break;
             
-            case SKPaymentTransactionStatePurchasing:
-//                [self handlePurchasingTransaction];
-                break;
+            case SKPaymentTransactionStatePurchasing:{
+                self.hud = [MBProgressHUD showHUDAddedTo:((StoreInventoryViewController *)[self topViewControllerWithRootViewController:[self topViewController]]).overlayView animated:YES];
+                self.hud.labelText = @"Purchasing...";
+                }break;
 
             case SKPaymentTransactionStateDeferred:
                 NSLog(@"Deferred...");
@@ -112,9 +133,25 @@
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
     NSLog(@"completeTransaction...");
-    double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
-    [[NSUbiquitousKeyValueStore defaultStore] setDouble:count + 23 forKey:@"BonusBallsCount"];
-    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+
+    NSDictionary *products = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Store_Products"];
+    
+    for (int i = 0; i < products.count; i++) {
+        if ([[[products objectForKey:NSStringFromInt(i)] objectForKey:@"ProductIdentifiers"] isEqualToString:transaction.payment.productIdentifier]) {
+            double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
+            [[NSUbiquitousKeyValueStore defaultStore] setDouble:count + [[[products objectForKey:NSStringFromInt(i)] objectForKey:@"count"] intValue]  forKey:@"BonusBallsCount"];
+            [[NSUbiquitousKeyValueStore defaultStore] setBool:NO forKey:@"showAds"];
+            [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+        }
+    }
+    
+    
+    
+    
+    
+//    double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
+//    [[NSUbiquitousKeyValueStore defaultStore] setDouble:count + 23 forKey:@"BonusBallsCount"];
+//    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
     
 //    [self provideContentForProductIdentifier:transaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -133,47 +170,46 @@
     NSLog(@"Transaction error: %@", transaction.error.localizedDescription);
     if (transaction.error.code != SKErrorPaymentCancelled)
     {
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                       message:@"There was an error while processing your transaction. Please try again at a later time."
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                         }];
-        
-        [alert addAction:okAction];
-        
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [appDelegate.window.rootViewController presentViewController:alert animated:YES completion:nil];
+//        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+//                                                                       message:@"There was an error while processing your transaction. Please try again at a later time."
+//                                                                preferredStyle:UIAlertControllerStyleAlert];
+//        
+//        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+//                                                         handler:^(UIAlertAction * action) {
+//                                                         }];
+//        
+//        [alert addAction:okAction];
+//        
+//        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+//        [appDelegate.window.rootViewController presentViewController:alert animated:YES completion:nil];
     }
     
     [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
 }
 -(void)buyProductWithProductIdentifier:(NSString *)productIdentifier{
-    [self handlePurchasingTransaction];
-    SKMutablePayment * payment = [SKMutablePayment paymentWithProduct:[self.products objectForKey:productIdentifier]];
-    payment.simulatesAskToBuyInSandbox = YES;
+    
+    SKPayment * payment = [SKPayment paymentWithProduct:[self.products objectForKey:productIdentifier]];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
     
 }
 
-- (void)handlePurchasingTransaction
-{
-    NSLog(@"Purchasing...");
-    //show purchansing alert.
-    
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Purchasing"
-                                                                   message:@"Please wait while we process your transaction."
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                     handler:^(UIAlertAction * action) {
-                                                     }];
-    
-    [alert addAction:okAction];
-    
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [((UINavigationController *)appDelegate.window.rootViewController).topViewController presentViewController:alert animated:YES completion:nil];
+- (UIViewController*)topViewController {
+    return [self topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
+- (UIViewController*)topViewControllerWithRootViewController:(UIViewController*)rootViewController {
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController* tabBarController = (UITabBarController*)rootViewController;
+        return [self topViewControllerWithRootViewController:tabBarController.selectedViewController];
+    } else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController* navigationController = (UINavigationController*)rootViewController;
+        return [self topViewControllerWithRootViewController:navigationController.visibleViewController];
+    } else if (rootViewController.presentedViewController) {
+        UIViewController* presentedViewController = rootViewController.presentedViewController;
+        return [self topViewControllerWithRootViewController:presentedViewController];
+    } else {
+        return rootViewController;
+    }
 }
 
 @end

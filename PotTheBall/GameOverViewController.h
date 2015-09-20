@@ -22,7 +22,6 @@
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *MenuButtons;
 
-- (IBAction)share:(id)sender;
 - (IBAction)restart:(id)sender;
 - (IBAction)home:(id)sender;
 - (IBAction)leaderboard:(id)sender;

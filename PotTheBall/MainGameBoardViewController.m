@@ -23,7 +23,31 @@
 
 #import <BlocksKit/BlocksKit.h>
 
-const int startingCountDown = 5;
+#import <AudioToolbox/AudioServices.h>
+#import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
+
+typedef NS_ENUM(NSUInteger, RingSegment) {
+    RingSegmentUp,
+    RingSegmentRight,
+    RingSegmentDown,
+    RingSegmentLeft
+};
+
+
+static BOOL isBallPowerBall(UIView* ball)
+{
+    if (ball.tag == 0) {
+        return YES;
+    }
+    return NO;
+    
+}
+
+
+const int startingCountDown = 45;
+const int bonusTime = 4;
+
 
 #define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
 @interface MainGameBoardViewController ()
@@ -56,6 +80,8 @@ const int startingCountDown = 5;
 
 @property (nonatomic, strong)NSDictionary *levels;
 
+@property (nonatomic, strong)AVAudioPlayer *player;
+@property (nonatomic, strong)AVAudioPlayer *failPlayer;
 
 @end
 
@@ -73,12 +99,30 @@ const int startingCountDown = 5;
     
     self.isBonusActivate = NO;
     self.isViewWillAppear = NO;
-   
+    
+    NSError *soundError = nil;
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"success" ofType:@"wav"]] error:&soundError];
+    [self.player setVolume:1];
+
+    if(self.player == nil)
+        NSLog(@"%@",soundError);
+    
+    self.failPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"wav"]] error:&soundError];
+    [self.failPlayer setVolume:1];
+    
+    if(self.failPlayer == nil)
+        NSLog(@"%@",soundError);
+
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    self.isAnimation = NO;
     self.isViewWillAppear = YES;
+    
+    for (UIView *view in self.balls) {
+        [view removeFromSuperview];
+    }
     
     NSDictionary *imageData = [self randBallImage];
     self.ball.image = [imageData objectForKey:@"image"];
@@ -104,10 +148,6 @@ const int startingCountDown = 5;
     
 
             } repeats:NO];
-    }
-    
-    for (UIView *view in self.balls) {
-        [view removeFromSuperview];
     }
     
         [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
@@ -165,7 +205,6 @@ const int startingCountDown = 5;
 #pragma mark - Touch Handles
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-    
     [super touchesMoved:touches withEvent:event];
     
     UITouch *touch = [touches anyObject];
@@ -190,26 +229,13 @@ const int startingCountDown = 5;
             currentl.y < previousl.y) {
             
             UIView *ball = self.balls[0];
-            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
             
-            if (ball.tag != 0 && ball.tag != [self.colorSeg[0] integerValue] ) {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score--;
-                } else if (self.gameMode == GameModeArcade) {
-                    //game over
-                    [self.countDownTimer invalidate];
-                    
-                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
-                }
+            if ([self isBall:ball matchRingSegment:RingSegmentUp] && !isBallPowerBall(ball)) {
+                [self handleUserError];
             } else {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score++;
-                } else if (self.gameMode == GameModeArcade) {
-                    self.score--;
-                }
-                
+                [self handleUserSuccess];
             }
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
             
@@ -244,26 +270,13 @@ const int startingCountDown = 5;
                    currentl.x < previousl.x) {
             
             UIView *ball = self.balls[0];
-            
-            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
             
-            if (ball.tag != [self.colorSeg[3] integerValue] && ball.tag != 0 ) {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score--;
-                } else if (self.gameMode == GameModeArcade) {
-                    //game over
-                    [self.countDownTimer invalidate];
-                    
-                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
-                }
+            if ([self isBall:ball matchRingSegment:RingSegmentLeft] && !isBallPowerBall(ball) ) {
+                 [self handleUserError];
             } else {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score++;
-                } else if (self.gameMode == GameModeArcade) {
-                    self.score--;
-                }
+                [self handleUserSuccess];
                 
             }
 
@@ -300,24 +313,12 @@ const int startingCountDown = 5;
                    currentl.x > previousl.x) {
             
             UIView *ball = self.balls[0];
-            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
-            if (ball.tag != [self.colorSeg[1] integerValue] && ball.tag != 0 ) {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score--;
-                } else if (self.gameMode == GameModeArcade) {
-                    //game over
-                    [self.countDownTimer invalidate];
-                    
-                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
-                }
+            if ([self isBall:ball matchRingSegment:RingSegmentRight] && !isBallPowerBall(ball) ) {
+                [self handleUserError];
             } else {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score++;
-                } else if (self.gameMode == GameModeArcade) {
-                    self.score--;
-                }
+                [self handleUserSuccess];
                 
             }
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
@@ -353,25 +354,12 @@ const int startingCountDown = 5;
                    currentl.y > previousl.y) {
             
             UIView *ball = self.balls[0];
-            NSLog(@"simple print-----ball.tag------{%ld}", (long)ball.tag);
             [self.balls removeObjectAtIndex:0];
             
-            if (ball.tag != [self.colorSeg[2] integerValue] && ball.tag != 0 ) {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score--;
-                } else if (self.gameMode == GameModeArcade) {
-                    //game over
-                    [self.countDownTimer invalidate];
-                    
-                    [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
-                }
-            } else {
-                if (self.gameMode == GameModeTimeAttack) {
-                    self.score++;
-                } else if (self.gameMode == GameModeArcade) {
-                    self.score--;
-                }
-                
+            if ([self isBall:ball matchRingSegment:RingSegmentDown] && !isBallPowerBall(ball) ) {
+                [self handleUserError];
+              } else {
+                [self handleUserSuccess];
             }
             self.scoreLabel.text = [NSString stringWithFormat:@"%d", self.score];
             
@@ -407,7 +395,6 @@ const int startingCountDown = 5;
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
-    
     if (!self.isBonusActivate) {
         
         if (self.isAnimation) {
@@ -461,7 +448,6 @@ const int startingCountDown = 5;
 
 //    [self rotateColorSegRightTurns:1];
     [self rotateColorSegLeftTurns:1];
-    NSLog(@"simple print-----after------{%@}", self.colorSeg);
 }
 
 -(void)rotateRingRightTurns:(int)truns{
@@ -529,6 +515,7 @@ const int startingCountDown = 5;
         }
         
         gameOverViewController.gameMode = self.gameMode;
+        
     }
 }
 -(IBAction)unwindToGameBoard:(UIStoryboardSegue *)segue {
@@ -587,6 +574,9 @@ const int startingCountDown = 5;
 }
 
 - (IBAction)restartGame:(id)sender {
+    self.isAnimation = NO;
+    [self.countDownTimer invalidate];
+
     if (self.gameState != GameStatePrepareStart) {
         self.gameState = GameStatePrepareStart;
         if (self.gameMode == GameModeTimeAttack) {
@@ -608,9 +598,10 @@ const int startingCountDown = 5;
         }
         
         CGRect rect = self.ball.frame;
+        int tag = (int)self.ball.tag;
         
         self.ball = [[UIImageView alloc] initWithImage:self.ball.image];
-        self.ball.tag = self.ball.tag;
+        self.ball.tag = tag;
         self.ball.frame = CGRectMake(CGRectGetWidth(self.view.frame)/2 - CGRectGetWidth(rect)/2, CGRectGetHeight(self.view.frame)/2 - CGRectGetHeight(rect)/2, CGRectGetWidth(rect), CGRectGetHeight(rect));
        
     }
@@ -632,35 +623,36 @@ const int startingCountDown = 5;
 }
 
 - (IBAction)activateBonus:(id)sender {
-    if ([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"] > 0) {
-        double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
-        [[NSUbiquitousKeyValueStore defaultStore] setDouble:count - 1 forKey:@"BonusBallsCount"];
-        
-        [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
-        [[NSUbiquitousKeyValueStore defaultStore] synchronize];
-
-        self.bonusCountDown = self.bonusCountDown + 10;
-        self.isBonusActivate = YES;
-        [((UIView *)self.balls[0]) removeFromSuperview];
-        self.balls[0] = [self newBallImageWithFrame:((UIView *)self.balls[0]).frame];
-        [self.view addSubview:self.balls[0]];
-        [self animateFullScale:self.balls[0]];
-        self.bonusDownTimer = [NSTimer bk_scheduledTimerWithTimeInterval:1 block:^(NSTimer *timer) {
-            if (self.bonusCountDown != 0) {
-                self.bonusCountDown--;
-                
-                self.isBonusActivate = YES;
-                
-               
-            } else {
-                self.isBonusActivate = NO;
-                [self.bonusDownTimer invalidate];
-                
-            }
+    if (self.gameState != GameStatePrepareStart) {
+        if ([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"] > 0) {
+            double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
+            [[NSUbiquitousKeyValueStore defaultStore] setDouble:count - 1 forKey:@"BonusBallsCount"];
             
-        } repeats:YES];
+            [self.bonusBalls setTitle:NSStringFromInt([[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]) forState:UIControlStateNormal];
+            [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+            
+            self.bonusCountDown = self.bonusCountDown + bonusTime;
+            self.isBonusActivate = YES;
+            [((UIView *)self.balls[0]) removeFromSuperview];
+            self.balls[0] = [self newBallImageWithFrame:((UIView *)self.balls[0]).frame];
+            [self.view addSubview:self.balls[0]];
+            [self animateFullScale:self.balls[0]];
+            self.bonusDownTimer = [NSTimer bk_scheduledTimerWithTimeInterval:1 block:^(NSTimer *timer) {
+                if (self.bonusCountDown != 0) {
+                    self.bonusCountDown--;
+                    
+                    self.isBonusActivate = YES;
+                    
+                    
+                } else {
+                    self.isBonusActivate = NO;
+                    [self.bonusDownTimer invalidate];
+                    
+                }
+                
+            } repeats:YES];
+        }
     }
-    
 }
 
 - (void)rotateRing {
@@ -709,10 +701,9 @@ const int startingCountDown = 5;
     
     self.scoreStaticLabel.text = @"Balls";
     
-    
     self.levels = @{ @(1) : @{@"turnCount":@(5),
                               @"rotationProbability": [NSNull new],
-                              @"countDown" : @(45)
+                              @"countDown" : @(6)
                               },
                      @(2) : @{@"turnCount":@(8),
                               @"rotationProbability":@(3),
@@ -720,17 +711,82 @@ const int startingCountDown = 5;
                               },
                      @(3) : @{@"turnCount":@(10),
                               @"rotationProbability":@(2),
-                              @"countDown" : @(25)
+                              @"countDown" : @(6)
                               },
-                     @(4) : @{@"turnCount":@(20),
+                     @(4) : @{@"turnCount":@(15),
                               @"rotationProbability":@(1),
-                              @"countDown" : @(45)
+                              @"countDown" : @(10)
                               },
-                     @(5) : @{@"turnCount":@(INT_MAX),
+                     @(5) : @{@"turnCount":@(15),
                               @"rotationProbability":@(0),
-                              @"countDown" : @(45)
+                              @"countDown" : @(11)
                               },
+                     @(6) : @{@"turnCount":@(13),
+                              @"rotationProbability":@(0),
+                              @"countDown" : @(8)
+                              },
+                     @(7) : @{@"turnCount":@(11),
+                              @"rotationProbability":@(0),
+                              @"countDown" : @(6)
+                              },
+                     @(8) : @{@"turnCount":@(10),
+                              @"rotationProbability":@(0),
+                              @"countDown" : @(5)
+                              },
+                     @(9) : @{@"turnCount":@(12),
+                               @"rotationProbability":@(3),
+                               @"countDown" : @(8)
+                               },
+                     @(10) : @{@"turnCount":@(13),
+                               @"rotationProbability":@(2),
+                               @"countDown" : @(8)
+                               },
+                     @(11) : @{@"turnCount":@(11),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(8)
+                               },
+                     @(12) : @{@"turnCount":@(10),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(5)
+                               },
+                     @(13) : @{@"turnCount":@(9),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(4)
+                               },
+                     @(14) : @{@"turnCount":@(8),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(4)
+                               },
+                     @(15) : @{@"turnCount":@(5),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(2)
+                               },
+                     @(16) : @{@"turnCount":@(7),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(3)
+                               },
+                     @(17) : @{@"turnCount":@(8),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(4)
+                               },
+                     @(18) : @{@"turnCount":@(10),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(5)
+                               },
+                     @(19) : @{@"turnCount":@(11),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(7)
+                               },
+                     @(20) : @{@"turnCount":@(13),
+                              @"rotationProbability":@(0),
+                              @"countDown" : @(8)
+                              },
+                     @(21) : @{@"turnCount":@(12),
+                               @"rotationProbability":@(0),
+                               @"countDown" : @(4)
+                               },
                      };
+
     
     self.currentlevelNumber = 1;
     self.currentlevel = [self.levels objectForKey:@(self.currentlevelNumber)];
@@ -766,7 +822,7 @@ const int startingCountDown = 5;
                               @"rotationProbability":@(1)
                               },
                      @(5) : @{@"turnCount":@(INT_MAX),
-                              @"rotationProbability":@(0)
+                              @"rotationProbability":@(1)
                               },
                      };
     self.currentlevelNumber = 1;
@@ -789,7 +845,63 @@ const int startingCountDown = 5;
         
     }];
     
+  
     [self rotateColorSegLeftTurns:1];
+}
+
+-(BOOL)isBall:(UIView *)ball matchRingSegment:(RingSegment)ringSegment{
+    
+    if (ball.tag != [self.colorSeg[ringSegment] integerValue]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (void)handleUserError {
+    id soundSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableSound"];
+    if (soundSetting) {
+        if ([soundSetting boolValue]) {
+            NSError *soundError = nil;
+            self.failPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"fail" ofType:@"wav"]] error:&soundError];
+            [self.failPlayer setVolume:1];
+            
+            if(self.failPlayer == nil)
+                NSLog(@"%@",soundError);
+            [self.failPlayer play];
+        }
+    }
+    
+    id vibrationSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableVibration"];
+    if (vibrationSetting) {
+        if ([vibrationSetting boolValue]) {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        }
+    }
+    
+    if (self.gameMode == GameModeTimeAttack) {
+        self.score--;
+    } else if (self.gameMode == GameModeArcade) {
+        //game over
+        [self.countDownTimer invalidate];
+        
+        [self performSegueWithIdentifier:@"toGameOverScreen" sender:self];
+    }
+}
+
+- (void)handleUserSuccess {
+    id soundSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableSound"];
+    if (soundSetting) {
+        if ([soundSetting boolValue]) {
+            
+            [self.player play];
+        }
+    }
+    
+    if (self.gameMode == GameModeTimeAttack) {
+        self.score++;
+    } else if (self.gameMode == GameModeArcade) {
+        self.score--;
+    }
 }
 
 @end

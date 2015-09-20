@@ -22,6 +22,5 @@
 -(NSNumber *)priceForProductIdentifier:(NSString *)productIdentifier;
 
 -(void)loadProductsWithCompletionBlock:(void (^)(NSDictionary *products, NSError *error))completionBlock;
--(void)reloadProducts;
 -(void)buyProductWithProductIdentifier:(NSString *)productIdentifier;
 @end

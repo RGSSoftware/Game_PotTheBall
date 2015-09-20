@@ -10,11 +10,13 @@
 #import "IAPStore.h"
 #import "GameNavigationController.h"
 
-
+#import "NSString+RGSInt.h"
 
 #import "AdHelper.h"
 
 #import <BlocksKit/BlocksKit.h>
+
+#import <AudioToolbox/AudioServices.h>
 
 @interface AppDelegate ()
 @property BOOL enteringFromForeground;
@@ -31,22 +33,24 @@
     // Override point for customization after application launch.
     [[SKPaymentQueue defaultQueue] addTransactionObserver:[IAPStore sharedManager]];
     
-    [IAPStore sharedManager].productIdentifiers = [[NSSet setWithArray:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"IPA_ProductIdentifiers"]] mutableCopy];
+    NSMutableArray *productIdentifiers = [NSMutableArray new];
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver: self
-     selector: @selector (storeDidChange:)
-     name: NSUbiquitousKeyValueStoreDidChangeExternallyNotification
-     object: [NSUbiquitousKeyValueStore defaultStore]];
+    NSDictionary *products = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Store_Products"];
     
-    // get changes that might have happened while this
-    // instance of your app wasn't running
+    for (int i = 0; i < products.count; i++) {
+        [productIdentifiers addObject:[[products objectForKey:NSStringFromInt(i)] objectForKey:@"ProductIdentifiers"]];
+    }
     
-//    double count = [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"];
-//    [[NSUbiquitousKeyValueStore defaultStore] setDouble:55 forKey:@"BonusBallsCount"];
-//    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+    [IAPStore sharedManager].productIdentifiers = [[NSSet setWithArray:productIdentifiers] mutableCopy];
     
-    
+
+    id count = [[NSUbiquitousKeyValueStore defaultStore] objectForKey:@"BonusBallsCount"];
+    if (!count) {
+        [[NSUbiquitousKeyValueStore defaultStore] setDouble:7 forKey:@"BonusBallsCount"];
+        [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+
+    }
+
     NSLog(@"simple print--lunach---bonus count------{%f}", [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]);
     
     [[AdHelper sharedManager] loadAdNetworks];
@@ -64,39 +68,7 @@
     return YES;
 }
 
-- (void)storeDidChange:(NSNotification *)notification
-{
-    // Retrieve the changes from iCloud
-    NSLog(@"simple print-----erferer bonus count------{%f}", [[NSUbiquitousKeyValueStore defaultStore] doubleForKey:@"BonusBallsCount"]);
-    NSLog(@"simple print-----change value------{%@}", [notification.userInfo objectForKey:NSUbiquitousKeyValueStoreChangeReasonKey]);
-    
-    UILabel *redSquare = [UILabel new];
-    redSquare.frame = CGRectMake(20, 20, 100, 100);
-    redSquare.backgroundColor = [UIColor redColor];
 
-    [self.window.rootViewController.view addSubview:redSquare];
-}
-
-- (BOOL) isICloudAvailable
-{
-    // Make sure a correct Ubiquity Container Identifier is passed
-    id iCloudToken = [[NSFileManager defaultManager] ubiquityIdentityToken];
-    if ( iCloudToken != nil) {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-- (void)applicationWillResignActive:(UIApplication *)application {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-}
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
@@ -125,10 +97,6 @@
     
     
     
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
 @end

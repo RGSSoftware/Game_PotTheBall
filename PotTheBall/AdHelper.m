@@ -74,14 +74,14 @@
 - (GADInterstitial *)createAndLoadInterstitial {
     GADInterstitial *interstitial;
     if (![[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Admob_Config"] objectForKey:@"interstitialAdUnitID"] isEqualToString:@""]) {
-        NSString *string = [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Admob_Config"] objectForKey:@"interstitialAdUnitID"];
+//        NSString *string = [[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Admob_Config"] objectForKey:@"interstitialAdUnitID"];
         interstitial = [[GADInterstitial alloc] initWithAdUnitID:@""];
         
         interstitial.delegate = self;
         GADRequest *request = [GADRequest request];
         
         request.testDevices = @[
-                                @"2077ef9a63d2b398840261c8221a0c9a"  // Eric's iPod Touch
+                                @"TestDevices"  // Eric's iPod Touch
                                 ];
         [interstitial loadRequest:request];
     }
@@ -116,7 +116,6 @@
                       appSignature:[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"appSignature"]
                           delegate:self];
         [Chartboost cacheMoreApps:CBLocationMainMenu];
-        [Chartboost cacheInterstitial:CBLocationStartup];
         [Chartboost cacheInterstitial:CBLocationGameOver];
         [Chartboost cacheInterstitial:CBLocationPause];
         if ([[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Chatboost_Config"] objectForKey:@"showRewardVideos"] boolValue]) {
@@ -125,12 +124,14 @@
         }
         
     }
-    
-    
 }
 
 +(BOOL)shouldShowInterstitialOnStartUp{
-    return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnStartUp"] boolValue];
+    if (![[NSUbiquitousKeyValueStore defaultStore] objectForKey:@"showAds"]) {
+        
+        return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnStartUp"] boolValue];
+    }
+    return NO;
 }
 
 +(BOOL)shouldShowAdmobInterstitialOnStartUp{
@@ -143,7 +144,11 @@
 
 
 +(BOOL)shouldShowInterstitialOnEnterForeground{
-    return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue];
+    if (![[NSUbiquitousKeyValueStore defaultStore] objectForKey:@"showAds"]) {
+        return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnEnterForeground"] boolValue];
+    }
+    return NO;
+    
 }
 
 +(BOOL)shouldShowAdmobInterstitialOnEnterForeground{
@@ -161,7 +166,12 @@
 }
 
 +(BOOL)shouldShowInterstitialOnGameOver{
-    return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnGameOver"] boolValue];
+    if (![[NSUbiquitousKeyValueStore defaultStore] objectForKey:@"showAds"]) {
+        
+        return [[[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Ad_Config"] objectForKey:@"Interstitial"] objectForKey:@"showOnGameOver"] boolValue];
+    }
+    return NO;
+    
 }
 
 +(BOOL)shouldShowAdmobInterstitialOnGameOver{
@@ -225,12 +235,7 @@
         self.rewardVideoSuccess = nil;
     }
     
-    NSLog(@"simple print-----compete------{}");
 }
-- (void)didCloseRewardedVideo:(CBLocation)location{
-    NSLog(@"simple print-----close------{}");
-}
-
 -(void)showMoreGames{
     [Chartboost showMoreApps:CBLocationMainMenu];
 }

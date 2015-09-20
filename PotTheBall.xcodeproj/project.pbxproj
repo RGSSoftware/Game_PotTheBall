@@ -14,6 +14,9 @@
 		2200D81A1B4EB27A00006944 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2200D8191B4EB27A00006944 /* CoreGraphics.framework */; };
 		2200D81C1B4EB28900006944 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2200D81B1B4EB28900006944 /* UIKit.framework */; };
 		2200D81E1B4EB29000006944 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2200D81D1B4EB29000006944 /* Foundation.framework */; };
+		2203E2601B5B633B00A24384 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2203E25F1B5B633B00A24384 /* AudioToolbox.framework */; };
+		2203E2621B5D513500A24384 /* success.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2203E2611B5D513500A24384 /* success.wav */; };
+		2203E2641B5D5A0100A24384 /* fail.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2203E2631B5D5A0100A24384 /* fail.wav */; };
 		223FBBFE1B4ECD2B00DEB219 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223FBBFD1B4ECD2B00DEB219 /* SystemConfiguration.framework */; };
 		223FBC001B4ECD3400DEB219 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223FBBFF1B4ECD3400DEB219 /* MediaPlayer.framework */; };
 		223FBC051B50346D00DEB219 /* UIView+RemoveConstraints.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FBC041B50346D00DEB219 /* UIView+RemoveConstraints.m */; };
@@ -63,6 +66,9 @@
 		2200D8191B4EB27A00006944 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2200D81B1B4EB28900006944 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2200D81D1B4EB29000006944 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2203E25F1B5B633B00A24384 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		2203E2611B5D513500A24384 /* success.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = success.wav; sourceTree = "<group>"; };
+		2203E2631B5D5A0100A24384 /* fail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = fail.wav; sourceTree = "<group>"; };
 		223FBBFD1B4ECD2B00DEB219 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		223FBBFF1B4ECD3400DEB219 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		223FBC031B50346D00DEB219 /* UIView+RemoveConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+RemoveConstraints.h"; sourceTree = "<group>"; };
@@ -122,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2203E2601B5B633B00A24384 /* AudioToolbox.framework in Frameworks */,
 				223FBC001B4ECD3400DEB219 /* MediaPlayer.framework in Frameworks */,
 				223FBBFE1B4ECD2B00DEB219 /* SystemConfiguration.framework in Frameworks */,
 				2200D81E1B4EB29000006944 /* Foundation.framework in Frameworks */,
@@ -189,8 +196,8 @@
 				229ACE881B45AC460066782C /* StoreInventoryViewController.h */,
 				229ACE891B45AC460066782C /* StoreInventoryViewController.m */,
 				22968DFD1B1D67C100E37DA7 /* Main.storyboard */,
-				22968E001B1D67C100E37DA7 /* Images.xcassets */,
 				22968E021B1D67C100E37DA7 /* LaunchScreen.xib */,
+				22968E001B1D67C100E37DA7 /* Images.xcassets */,
 				22E531BA1B40788500D5F35B /* UIView+RGSConstraint.h */,
 				22E531BB1B40788500D5F35B /* UIView+RGSConstraint.m */,
 				223FBC031B50346D00DEB219 /* UIView+RemoveConstraints.h */,
@@ -211,6 +218,8 @@
 				22A2179D1B4308360015DF46 /* GameKitHelper.h */,
 				22A2179E1B4308360015DF46 /* GameKitHelper.m */,
 				2244528B1B49C439007CB101 /* PotTheBall.entitlements */,
+				2203E2611B5D513500A24384 /* success.wav */,
+				2203E2631B5D5A0100A24384 /* fail.wav */,
 				22968DF31B1D67C100E37DA7 /* Supporting Files */,
 			);
 			path = PotTheBall;
@@ -245,6 +254,7 @@
 		A4A183C63852DF741DCA4148 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2203E25F1B5B633B00A24384 /* AudioToolbox.framework */,
 				223FBBFF1B4ECD3400DEB219 /* MediaPlayer.framework */,
 				223FBBFD1B4ECD2B00DEB219 /* SystemConfiguration.framework */,
 				2200D81D1B4EB29000006944 /* Foundation.framework */,
@@ -319,7 +329,6 @@
 				TargetAttributes = {
 					22968DEF1B1D67C100E37DA7 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 32V3SFMGKM;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
 								enabled = 1;
@@ -359,7 +368,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2203E2621B5D513500A24384 /* success.wav in Resources */,
 				22968DFF1B1D67C100E37DA7 /* Main.storyboard in Resources */,
+				2203E2641B5D5A0100A24384 /* fail.wav in Resources */,
 				22968E041B1D67C100E37DA7 /* LaunchScreen.xib in Resources */,
 				22968E011B1D67C100E37DA7 /* Images.xcassets in Resources */,
 			);

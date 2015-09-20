@@ -97,6 +97,7 @@
         MFMailComposeViewController *composeViewController = [[MFMailComposeViewController alloc] initWithNibName:nil bundle:nil];
         [composeViewController setMailComposeDelegate:self];
         [composeViewController setMessageBody:[[[NSBundle mainBundle] objectForInfoDictionaryKey:@"Email_Config"] objectForKey:@"shareMessage"] isHTML:NO];
+        [composeViewController setSubject:@"Check out my high score"];
         [self presentViewController:composeViewController animated:YES completion:nil];
     } else {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Sorry"

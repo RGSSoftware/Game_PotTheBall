@@ -2,87 +2,64 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>App_ID</key>
-	<string>1014631396</string>
-	<key>Email_Config</key>
-	<dict>
-		<key>shareMessage</key>
-		<string>Emailing from my own app! :)</string>
-	</dict>
-	<key>Facebook_Config</key>
-	<dict>
-		<key>shareMessage</key>
-		<string>Messaging from my own app! :)</string>
-	</dict>
-	<key>Twitter_Config</key>
-	<dict>
-		<key>shareMessage</key>
-		<string>Tweeting from my own app! :)</string>
-	</dict>
 	<key>Ad_Config</key>
 	<dict>
-		<key>showRewardAfterGameOver</key>
-		<true/>
 		<key>Admob_Config</key>
 		<dict>
 			<key>Interstitial</key>
 			<dict>
+				<key>showOnEnterForeground</key>
+				<false/>
 				<key>showOnGameOver</key>
 				<false/>
 				<key>showOnStartUp</key>
-				<false/>
-				<key>showOnEnterForeground</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>interstitialAdUnitID</key>
-			<string>ca-app-pub-3940256099942544/4411468910</string>
+			<string>ID</string>
 		</dict>
 		<key>Chatboost_Config</key>
 		<dict>
-			<key>showRewardVideos</key>
-			<true/>
 			<key>Interstitial</key>
 			<dict>
+				<key>showOnEnterForeground</key>
+				<true/>
 				<key>showOnGameOver</key>
 				<true/>
 				<key>showOnStartUp</key>
 				<true/>
-				<key>showOnEnterForeground</key>
-				<true/>
 			</dict>
-			<key>appSignature</key>
-			<string>33c4923e877fcdf9572d677014459f0bc6a811ed</string>
 			<key>appId</key>
-			<string>559e7a4843150f601432ddbc</string>
+			<string>ID</string>
+			<key>appSignature</key>
+			<string>Signature</string>
+			<key>showRewardVideos</key>
+			<true/>
 		</dict>
 		<key>Interstitial</key>
 		<dict>
+			<key>showOnEnterForeground</key>
+			<true/>
 			<key>showOnGameOver</key>
 			<true/>
 			<key>showOnStartUp</key>
-			<false/>
-			<key>showOnEnterForeground</key>
-			<false/>
+			<true/>
 		</dict>
+		<key>showRewardAfterGameOver</key>
+		<true/>
 	</dict>
-	<key>IPA_ProductIdentifiers</key>
-	<array>
-		<string>com.RGSoftware.PotTheBall.25powerball</string>
-		<string>com.RGSoftware.PotTheBall.75powerball</string>
-		<string>com.RGSoftware.PotTheBall.225powerball</string>
-		<string>com.RGSoftware.PotTheBall.500powerball</string>
-		<string>com.RGSoftware.PotTheBall.1000powerball</string>
-	</array>
+	<key>App_ID</key>
+	<string>1014631396</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.RGSoftware.$(PRODUCT_NAME:rfc1034identifier)</string>
+	<string>com.Software.$(PRODUCT_NAME:rfc1034identifier)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>RR</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -91,8 +68,61 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>Email_Config</key>
+	<dict>
+		<key>shareMessage</key>
+		<string>Check out my high score in Ring Revolution.</string>
+	</dict>
+	<key>Facebook_Config</key>
+	<dict>
+		<key>shareMessage</key>
+		<string>Check out my high score in Ring Revolution.</string>
+	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>Store_Products</key>
+	<dict>
+		<key>0</key>
+		<dict>
+			<key>ProductIdentifiers</key>
+			<string>com.RGSoftware.PotTheBall.25powerball</string>
+			<key>count</key>
+			<string>25</string>
+		</dict>
+		<key>1</key>
+		<dict>
+			<key>ProductIdentifiers</key>
+			<string>com.RGSoftware.PotTheBall.75powerball</string>
+			<key>count</key>
+			<string>75</string>
+		</dict>
+		<key>2</key>
+		<dict>
+			<key>ProductIdentifiers</key>
+			<string>com.RGSoftware.PotTheBall.225powerball</string>
+			<key>count</key>
+			<string>225</string>
+		</dict>
+		<key>3</key>
+		<dict>
+			<key>ProductIdentifiers</key>
+			<string>com.RGSoftware.PotTheBall.500powerball</string>
+			<key>count</key>
+			<string>500</string>
+		</dict>
+		<key>4</key>
+		<dict>
+			<key>ProductIdentifiers</key>
+			<string>com.RGSoftware.PotTheBall.1000powerball</string>
+			<key>count</key>
+			<string>1000</string>
+		</dict>
+	</dict>
+	<key>Twitter_Config</key>
+	<dict>
+		<key>shareMessage</key>
+		<string>Check out my high score in #RingRevolution.</string>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>DS-DIGI.TTF</string>

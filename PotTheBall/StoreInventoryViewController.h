@@ -12,6 +12,7 @@
 @property (weak, nonatomic) IBOutlet UIView *overlayView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *countLabels;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *priceButtons;
 @property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray *powerBallImages;
 - (IBAction)close:(id)sender;

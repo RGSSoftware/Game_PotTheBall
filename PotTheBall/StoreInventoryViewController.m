@@ -12,6 +12,8 @@
 
 #import <MBProgressHUD/MBProgressHUD.h>
 
+#import "NSString+RGSInt.h"
+
 @interface StoreInventoryViewController ()
 
 @end
@@ -38,21 +40,26 @@
         view.hidden = YES;
     }
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.overlayView animated:YES];
     hud.labelText = @"Loading Store Inventory...";
     
     [[IAPStore sharedManager] loadProductsWithCompletionBlock:^(NSDictionary *products, NSError *error) {
         
-        
-        
-        NSArray *productIdentifiers = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"IPA_ProductIdentifiers"];
+       
+        NSDictionary *productsCount = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Store_Products"];
         
         for (int i = 0; i < self.priceButtons.count; i++) {
             for (UIButton *priceButton in self.priceButtons) {
                 if (priceButton.tag == i) {
-                    SKProduct *product = (SKProduct *)[products objectForKey:productIdentifiers[i]];
+                    SKProduct *product = (SKProduct *)[products objectForKey:[[productsCount objectForKey:NSStringFromInt(i)] objectForKey:@"ProductIdentifiers"]];
                     currencyFormatter.locale = product.priceLocale;
                     [priceButton setTitle:[currencyFormatter stringFromNumber:@(product.price.floatValue)] forState:UIControlStateNormal];
+                }
+            }
+            
+            for (UILabel *countLabel in self.countLabels) {
+                if (countLabel.tag == i) {
+                    countLabel.text = [[productsCount objectForKey:NSStringFromInt(i)] objectForKey:@"count"];
                 }
             }
         }
@@ -61,19 +68,21 @@
             view.hidden = NO;
         }
         
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        [MBProgressHUD hideHUDForView:self.overlayView animated:YES];
     }];
     
    
     
 }
 
+
 -(void)handleTap:(UIGestureRecognizer *)gestureRecognizer{
     if (!CGRectContainsPoint(self.overlayView.frame,[gestureRecognizer locationInView:self.view])) {
         [self close:nil];
     }
-
 }
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -95,11 +104,12 @@
 }
 
 - (IBAction)buyBonuses:(id)sender {
+    NSDictionary *productsCount = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"Store_Products"];
+    
     if ([SKPaymentQueue canMakePayments]) {
         UIButton *priceButton = (UIButton *)sender;
         
-        NSArray *productIdentifiers = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"IPA_ProductIdentifiers"];
-        [[IAPStore sharedManager] buyProductWithProductIdentifier:productIdentifiers[priceButton.tag]];
+        [[IAPStore sharedManager] buyProductWithProductIdentifier:[[productsCount objectForKey:NSStringFromInt((int)priceButton.tag)] objectForKey:@"ProductIdentifiers"]];
     } else {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
                                                                        message:@"This account has restricted payment access."
