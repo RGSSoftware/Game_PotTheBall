@@ -6,4 +6,4 @@ Even though Ring Revolution spots a simple and flat design, it is really beautif
 
 
 
-![watchscreenshotsmall](http://i58.tinypic.com/21dkjte.jpg)
+![screenshot1](http://i58.tinypic.com/nf4cxc.jpg)
